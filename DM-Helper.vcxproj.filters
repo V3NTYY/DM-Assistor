@@ -15,32 +15,32 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DM-Helper.h">
+    <ClInclude Include="src\headers\DM-Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="src\headers\framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="src\headers\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DM-Helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <Image Include="src\resources\DM-Helper.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\resources\small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DM-Helper.rc">
+    <ResourceCompile Include="src\resources\DM-Helper.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="DM-Helper.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClCompile Include="src\DM-Helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

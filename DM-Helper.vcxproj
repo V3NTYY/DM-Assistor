@@ -127,19 +127,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DM-Helper.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\headers\DM-Helper.h" />
+    <ClInclude Include="src\headers\framework.h" />
+    <ClInclude Include="src\headers\Resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DM-Helper.cpp" />
+    <Image Include="src\resources\DM-Helper.ico" />
+    <Image Include="src\resources\small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DM-Helper.rc" />
+    <ResourceCompile Include="src\resources\DM-Helper.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="DM-Helper.ico" />
-    <Image Include="small.ico" />
+    <ClCompile Include="src\DM-Helper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
