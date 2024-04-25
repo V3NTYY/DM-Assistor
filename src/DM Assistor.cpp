@@ -1,7 +1,7 @@
 // DM-Helper.cpp : Defines the entry point for the application.
 
 #include "headers/framework.h"
-#include "headers/DM-Helper.h"
+#include "headers/DM Assistor.h"
 
 #define MAX_LOADSTRING 100
 

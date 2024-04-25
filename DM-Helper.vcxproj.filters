@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\headers\DM-Helper.h">
+    <ClInclude Include="src\headers\DM Assistor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\headers\framework.h">
@@ -26,20 +26,20 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="src\resources\DM-Helper.ico">
+    <Image Include="src\resources\DMAssistorMain.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="src\resources\small.ico">
+    <Image Include="src\resources\DMAssistorSmall.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="src\resources\DM-Helper.rc">
+    <ResourceCompile Include="src\resources\DMAssistor.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DM-Helper.cpp">
+    <ClCompile Include="src\DM Assistor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
