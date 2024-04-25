@@ -24,6 +24,7 @@
     <ProjectGuid>{4541ad66-2a8e-421c-91b3-8fd56b29208f}</ProjectGuid>
     <RootNamespace>DMHelper</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>DM Assistor</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
