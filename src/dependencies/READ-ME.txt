@@ -14,8 +14,8 @@ Click on the ribbon on the top, select Build -> Build Solution
 
 Repeat this for the following:
 
-debug -> Windows32
-build -> Windows32
+debug -> Win32
+release -> Win32
 debug -> x64
 build -> x64
 
