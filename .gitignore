@@ -3,3 +3,4 @@
 /x64
 *.aps
 /DM Assistor
+/src/dependencies/wxwidgets
