@@ -17,6 +17,6 @@ Repeat this for the following:
 debug -> Win32
 release -> Win32
 debug -> x64
-build -> x64
+release -> x64
 
 This will build all of the libraries for wxWidget. Once you have completed this, the project will already have the settings applied and you will be good to go.
