@@ -4,10 +4,11 @@
 #include "headers/DM Assistor.h"
 #include <wx/wx.h>
 
+
 class App : public wxApp {
 public:
     bool OnInit() {
-        wxFrame* window = new wxFrame(NULL, wxID_ANY, "GUI Test", wxDefaultPosition, wxSize(600, 400));
+        wxFrame* window = new wxFrame(NULL, wxID_ANY, "GUI Test", wxDefaultPosition, wxSize(1920, 1080));
         wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
         wxStaticText* text = new wxStaticText(window, wxID_ANY, "Well Done!\nEverything seems to be working",
             wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
