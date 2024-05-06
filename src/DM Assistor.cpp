@@ -42,6 +42,16 @@ MyFrame::MyFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title, wxDefau
     createDebugTab();
 }
 
+// Method that auto-sets the background color of all children of a given window
+void SetBackgroundColourForAllChildren(wxWindow* parent, const wxColour& colour)
+{
+    for (auto& child : parent->GetChildren())
+    {
+        child->SetBackgroundColour(colour);
+        SetBackgroundColourForAllChildren(child, colour); // Recursively set color for children of child
+    }
+}
+
 // Method that handles the character tab
 void MyFrame::createCharTab()
 {
@@ -140,22 +150,7 @@ void MyFrame::createDebugTab()
                 sampleQueryTextOutput->SetValue(sampleQuery);
         });
 
-	// Set colors for the AI query elements
-    AITextInput->SetBackgroundColour(debugTabColor);
-	AITextOutput->SetBackgroundColour(debugTabColor);
-	AIButton->SetBackgroundColour(debugTabColor);
-	encounterCheck->SetBackgroundColour(debugTabColor);
-	dialogCheck->SetBackgroundColour(debugTabColor);
-
-	// Set colors for the monster query elements
-	monsterTextInput->SetBackgroundColour(debugTabColor);
-	monsterTextOutput->SetBackgroundColour(debugTabColor);
-	monsterButton->SetBackgroundColour(debugTabColor);
-
-	// Set colors for the placeholder query elements
-    sampleQueryTextInput->SetBackgroundColour(debugTabColor);
-    sampleQueryTextOutput->SetBackgroundColour(debugTabColor);
-    sampleQueryButton->SetBackgroundColour(debugTabColor);
+    SetBackgroundColourForAllChildren(DebugTab, debugTabColor);
 
     DebugTab->SetBackgroundColour(debugTabColor);
     RIBBON->AddPage(DebugTab, "Debug Tab");
