@@ -5,7 +5,7 @@
 
 /// CONSTANTS ///
 
-const int SCREEN_WIDTH = 960;
+const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
 /////////////////
@@ -151,7 +151,6 @@ void MyFrame::createDebugTab()
         });
 
     SetBackgroundColourForAllChildren(DebugTab, debugTabColor);
-
     DebugTab->SetBackgroundColour(debugTabColor);
     RIBBON->AddPage(DebugTab, "Debug Tab");
 };
