@@ -57,76 +57,106 @@ void MyFrame::createDebugTab()
     wxPanel* DebugTab = new wxPanel(RIBBON, wxID_ANY);
 	wxColour debugTabColor = wxColour(246, 219, 253);
 
-    /// Define all positions and sizes of all elements on the debug tab
-    int inTxtBx[4] = { 10, 10, 200, 100 };
-    int queryBtn[4] = { inTxtBx[0] + inTxtBx[2] + 5, inTxtBx[1], 125, 25 };
-    int encountBx[4] = { queryBtn[0], queryBtn[1] + queryBtn[3] + 5, queryBtn[2], queryBtn[3]};
-    int dialogBx[4] = { queryBtn[0], encountBx[1] + encountBx[3] + 5, queryBtn[2], queryBtn[3]};
-    int outTxtBx[4] = { encountBx[0] + encountBx[2] + 5, inTxtBx[1], SCREEN_WIDTH - (encountBx[0] + encountBx[2]) - 40, inTxtBx[3]};
+    /// AI Query Positions & Sizes
+    int AITextInputData[4] = { 10, 10, 200, 100 };
+    int AIButtonData[4] = { AITextInputData[0] + AITextInputData[2] + 5, AITextInputData[1], 125, 25 };
+    int encounterCheckData[4] = { AIButtonData[0], AIButtonData[1] + AIButtonData[3] + 5, AIButtonData[2], AIButtonData[3]};
+    int dialogCheckData[4] = { AIButtonData[0], encounterCheckData[1] + encounterCheckData[3] + 5, AIButtonData[2], AIButtonData[3]};
+    int AITextOutputData[4] = { encounterCheckData[0] + encounterCheckData[2] + 5, AITextInputData[1], SCREEN_WIDTH - (encounterCheckData[0] + encounterCheckData[2]) - 40, AITextInputData[3]};
 
-	int monsterInBx[4] = { inTxtBx[0], inTxtBx[1] + inTxtBx[3] + 5, 200, 50};
-	int monsterQryBtn[4] = { monsterInBx[0] + monsterInBx[2] + 5, monsterInBx[1] + (monsterInBx[3] / 4), 125, 25};
-	int monsterOutBx[4] = { monsterQryBtn[0] + monsterQryBtn[2] + 5, monsterInBx[1], SCREEN_WIDTH - (monsterQryBtn[0] + monsterQryBtn[2]) - 40, monsterInBx[3] };
+	/// Monster Query Positions & Sizes
+	int monsterTextInputData[4] = { AITextInputData[0], AITextInputData[1] + AITextInputData[3] + 5, 200, 50};
+	int monsterButtonData[4] = { monsterTextInputData[0] + monsterTextInputData[2] + 5, monsterTextInputData[1] + (monsterTextInputData[3] / 4), 125, 25};
+	int monsterTextOutputData[4] = { monsterButtonData[0] + monsterButtonData[2] + 5, monsterTextInputData[1], SCREEN_WIDTH - (monsterButtonData[0] + monsterButtonData[2]) - 40, monsterTextInputData[3] };
 
-	/// Create all elements on the debug tab
-    wxTextCtrl* inTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(inTxtBx[0], inTxtBx[1]), wxSize(inTxtBx[2], inTxtBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-    wxTextCtrl* outTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(outTxtBx[0], outTxtBx[1]), wxSize(outTxtBx[2], outTxtBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-    wxButton* aiQueryBtn = new wxButton(DebugTab, wxID_ANY, "Debug AI Prompt", wxPoint(queryBtn[0], queryBtn[1]), wxSize(queryBtn[2], queryBtn[3]));
-	wxCheckBox* encounterCBx = new wxCheckBox(DebugTab, wxID_ANY, "Generate encounter", wxPoint(encountBx[0], encountBx[1]), wxSize(encountBx[2], encountBx[3]));
-    wxCheckBox* dialogueCBx = new wxCheckBox(DebugTab, wxID_ANY, "Generate dialogue", wxPoint(dialogBx[0], dialogBx[1]), wxSize(dialogBx[2], dialogBx[3]));
+	/// Placeholder Query Positions & Sizes
+    int sampleQueryTextInputData[4] = { monsterTextInputData[0], monsterTextInputData[1] + monsterTextInputData[3] + 5, monsterTextInputData[2], monsterTextInputData[3] };
+    int sampleQueryButtonData[4] = { sampleQueryTextInputData[0] + sampleQueryTextInputData[2] + 5, sampleQueryTextInputData[1] + (sampleQueryTextInputData[3] / 4), monsterButtonData[2], monsterButtonData[3] };
+    int sampleQueryTextOutputData[4] = { sampleQueryButtonData[0] + sampleQueryButtonData[2] + 5, sampleQueryTextInputData[1], monsterTextOutputData[2], monsterTextOutputData[3] };
 
-	wxTextCtrl* monsterInTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(monsterInBx[0], monsterInBx[1]), wxSize(monsterInBx[2], monsterInBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-	wxTextCtrl* monsterOutTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(monsterOutBx[0], monsterOutBx[1]), wxSize(monsterOutBx[2], monsterOutBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-	wxButton* monsterQueryBtn = new wxButton(DebugTab, wxID_ANY, "Debug Pull Monster", wxPoint(monsterQryBtn[0], monsterQryBtn[1]), wxSize(monsterQryBtn[2], monsterQryBtn[3]));
+	/// AI Query elements
+    wxTextCtrl* AITextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(AITextInputData[0], AITextInputData[1]), wxSize(AITextInputData[2], AITextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
+    wxTextCtrl* AITextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(AITextOutputData[0], AITextOutputData[1]), wxSize(AITextOutputData[2], AITextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
+    wxButton* AIButton = new wxButton(DebugTab, wxID_ANY, "Debug AI Prompt", wxPoint(AIButtonData[0], AIButtonData[1]), wxSize(AIButtonData[2], AIButtonData[3]));
+	wxCheckBox* encounterCheck = new wxCheckBox(DebugTab, wxID_ANY, "Generate encounter", wxPoint(encounterCheckData[0], encounterCheckData[1]), wxSize(encounterCheckData[2], encounterCheckData[3]));
+    wxCheckBox* dialogCheck = new wxCheckBox(DebugTab, wxID_ANY, "Generate dialogue", wxPoint(dialogCheckData[0], dialogCheckData[1]), wxSize(dialogCheckData[2], dialogCheckData[3]));
 
-    // Event listener for button clicks
-    aiQueryBtn->Bind(wxEVT_BUTTON, [inTxtBox, outTxtBox, encounterCBx, dialogueCBx](wxCommandEvent& event)
-    {
-    	wxString userAIPrompt = inTxtBox->GetValue();
-		if (userAIPrompt.IsEmpty())
-			outTxtBox->SetValue("No response.");
-		else if (encounterCBx->GetValue())
-			outTxtBox->SetValue("ENCOUNTER: " + userAIPrompt);
-		else if (dialogueCBx->GetValue())
-			outTxtBox->SetValue("DIALOGUE: " + userAIPrompt);
+	//// Monster Query elements
+	wxTextCtrl* monsterTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(monsterTextInputData[0], monsterTextInputData[1]), wxSize(monsterTextInputData[2], monsterTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
+	wxTextCtrl* monsterTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(monsterTextOutputData[0], monsterTextOutputData[1]), wxSize(monsterTextOutputData[2], monsterTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
+	wxButton* monsterButton = new wxButton(DebugTab, wxID_ANY, "Debug Pull Monster", wxPoint(monsterButtonData[0], monsterButtonData[1]), wxSize(monsterButtonData[2], monsterButtonData[3]));
+
+    /// Placeholder Query elements
+    wxTextCtrl* sampleQueryTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(sampleQueryTextInputData[0], sampleQueryTextInputData[1]), wxSize(sampleQueryTextInputData[2], sampleQueryTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
+    wxTextCtrl* sampleQueryTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(sampleQueryTextOutputData[0], sampleQueryTextOutputData[1]), wxSize(sampleQueryTextOutputData[2], sampleQueryTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
+    wxButton* sampleQueryButton = new wxButton(DebugTab, wxID_ANY, "Sample Query", wxPoint(sampleQueryButtonData[0], sampleQueryButtonData[1]), wxSize(sampleQueryButtonData[2], sampleQueryButtonData[3]));
+
+	// Listeners for AI query elements
+    AIButton->Bind(wxEVT_BUTTON, [AITextInput, AITextOutput, encounterCheck, dialogCheck](wxCommandEvent& event)
+		{
+    	wxString userQuery = AITextInput->GetValue();
+		if (userQuery.IsEmpty())
+			AITextOutput->SetValue("No response.");
+		else if (encounterCheck->GetValue())
+			AITextOutput->SetValue("ENCOUNTER: " + userQuery);
+		else if (dialogCheck->GetValue())
+			AITextOutput->SetValue("DIALOGUE: " + userQuery);
+
 		else
-			outTxtBox->SetValue(userAIPrompt);
-    });
+			AITextOutput->SetValue(userQuery);
+		});
 
-    monsterQueryBtn->Bind(wxEVT_BUTTON, [monsterInTxtBox, monsterOutTxtBox](wxCommandEvent& event)
+    encounterCheck->Bind(wxEVT_CHECKBOX, [encounterCheck, dialogCheck](wxCommandEvent& event)
         {
-            wxString monsterPulled = monsterInTxtBox->GetValue();
-            if (monsterPulled.IsEmpty())
-                monsterOutTxtBox->SetValue("No response.");
-            else
-                monsterOutTxtBox->SetValue(monsterPulled);
+            bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
+            if (isChecked)
+                dialogCheck->SetValue(false);
         });
 
-    // Event listeners for checkbox clicks
-    encounterCBx->Bind(wxEVT_CHECKBOX, [encounterCBx, dialogueCBx](wxCommandEvent& event)
-    {
-    	bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
-		if (isChecked)
-			dialogueCBx->SetValue(false);
-    });
+    dialogCheck->Bind(wxEVT_CHECKBOX, [encounterCheck, dialogCheck](wxCommandEvent& event)
+        {
+            bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
+            if (isChecked)
+                encounterCheck->SetValue(false);
+        });
 
-	dialogueCBx->Bind(wxEVT_CHECKBOX, [encounterCBx, dialogueCBx](wxCommandEvent& event)
-	{
-		bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
-        if (isChecked)
-            encounterCBx->SetValue(false);
-	});
+	/// Listeners for monster query elements
+    monsterButton->Bind(wxEVT_BUTTON, [monsterTextInput, monsterTextOutput](wxCommandEvent& event)
+        {
+            wxString monsterQuery = monsterTextInput->GetValue();
+            if (monsterQuery.IsEmpty())
+                monsterTextOutput->SetValue("No response.");
+            else
+                monsterTextOutput->SetValue(monsterQuery);
+        });
 
-	// Set colors for the debug tab
-    inTxtBox->SetBackgroundColour(debugTabColor);
-	outTxtBox->SetBackgroundColour(debugTabColor);
-	aiQueryBtn->SetBackgroundColour(debugTabColor);
-	encounterCBx->SetBackgroundColour(debugTabColor);
-	dialogueCBx->SetBackgroundColour(debugTabColor);
-	monsterInTxtBox->SetBackgroundColour(debugTabColor);
-	monsterOutTxtBox->SetBackgroundColour(debugTabColor);
-	monsterQueryBtn->SetBackgroundColour(debugTabColor);
+	/// Listeners for placeholder query elements
+    sampleQueryButton->Bind(wxEVT_BUTTON, [sampleQueryTextInput, sampleQueryTextOutput](wxCommandEvent& event)
+        {
+            wxString sampleQuery = sampleQueryTextInput->GetValue();
+            if (sampleQuery.IsEmpty())
+                sampleQueryTextOutput->SetValue("No response.");
+            else
+                sampleQueryTextOutput->SetValue(sampleQuery);
+        });
+
+	// Set colors for the AI query elements
+    AITextInput->SetBackgroundColour(debugTabColor);
+	AITextOutput->SetBackgroundColour(debugTabColor);
+	AIButton->SetBackgroundColour(debugTabColor);
+	encounterCheck->SetBackgroundColour(debugTabColor);
+	dialogCheck->SetBackgroundColour(debugTabColor);
+
+	// Set colors for the monster query elements
+	monsterTextInput->SetBackgroundColour(debugTabColor);
+	monsterTextOutput->SetBackgroundColour(debugTabColor);
+	monsterButton->SetBackgroundColour(debugTabColor);
+
+	// Set colors for the placeholder query elements
+    sampleQueryTextInput->SetBackgroundColour(debugTabColor);
+    sampleQueryTextOutput->SetBackgroundColour(debugTabColor);
+    sampleQueryButton->SetBackgroundColour(debugTabColor);
+
     DebugTab->SetBackgroundColour(debugTabColor);
-
     RIBBON->AddPage(DebugTab, "Debug Tab");
 };
