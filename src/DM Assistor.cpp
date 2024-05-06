@@ -86,40 +86,57 @@ void MyFrame::createDebugTab()
     int dialogBx[4] = { queryBtn[0], encountBx[1] + encountBx[3] + 5, queryBtn[2], queryBtn[3]};
     int outTxtBx[4] = { encountBx[0] + encountBx[2] + 5, inTxtBx[1], SCREEN_WIDTH - (encountBx[0] + encountBx[2]) - 40, inTxtBx[3]};
 
+	int monsterInBx[4] = { inTxtBx[0], inTxtBx[1] + inTxtBx[3] + 5, 200, 50};
+	int monsterQryBtn[4] = { monsterInBx[0] + monsterInBx[2] + 5, monsterInBx[1] + (monsterInBx[3] / 4), 125, 25};
+	int monsterOutBx[4] = { monsterQryBtn[0] + monsterQryBtn[2] + 5, monsterInBx[1], SCREEN_WIDTH - (monsterQryBtn[0] + monsterQryBtn[2]) - 40, monsterInBx[3] };
+
 	/// Create all elements on the debug tab
     wxTextCtrl* inTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(inTxtBx[0], inTxtBx[1]), wxSize(inTxtBx[2], inTxtBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
     wxTextCtrl* outTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(outTxtBx[0], outTxtBx[1]), wxSize(outTxtBx[2], outTxtBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-    wxButton* aiQueryButton = new wxButton(DebugTab, wxID_ANY, "Debug AI Prompt", wxPoint(queryBtn[0], queryBtn[1]), wxSize(queryBtn[2], queryBtn[3]));
-	wxCheckBox* encounterBtn = new wxCheckBox(DebugTab, wxID_ANY, "Generate encounter", wxPoint(encountBx[0], encountBx[1]), wxSize(encountBx[2], encountBx[3]));
-    wxCheckBox* dialogueBtn = new wxCheckBox(DebugTab, wxID_ANY, "Generate dialogue", wxPoint(dialogBx[0], dialogBx[1]), wxSize(dialogBx[2], dialogBx[3]));
+    wxButton* aiQueryBtn = new wxButton(DebugTab, wxID_ANY, "Debug AI Prompt", wxPoint(queryBtn[0], queryBtn[1]), wxSize(queryBtn[2], queryBtn[3]));
+	wxCheckBox* encounterCBx = new wxCheckBox(DebugTab, wxID_ANY, "Generate encounter", wxPoint(encountBx[0], encountBx[1]), wxSize(encountBx[2], encountBx[3]));
+    wxCheckBox* dialogueCBx = new wxCheckBox(DebugTab, wxID_ANY, "Generate dialogue", wxPoint(dialogBx[0], dialogBx[1]), wxSize(dialogBx[2], dialogBx[3]));
 
-    // Event listener for button click
-    aiQueryButton->Bind(wxEVT_BUTTON, [inTxtBox, outTxtBox, encounterBtn, dialogueBtn](wxCommandEvent& event)
+	wxTextCtrl* monsterInTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(monsterInBx[0], monsterInBx[1]), wxSize(monsterInBx[2], monsterInBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
+	wxTextCtrl* monsterOutTxtBox = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(monsterOutBx[0], monsterOutBx[1]), wxSize(monsterOutBx[2], monsterOutBx[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
+	wxButton* monsterQueryBtn = new wxButton(DebugTab, wxID_ANY, "Debug Pull Monster", wxPoint(monsterQryBtn[0], monsterQryBtn[1]), wxSize(monsterQryBtn[2], monsterQryBtn[3]));
+
+    // Event listener for button clicks
+    aiQueryBtn->Bind(wxEVT_BUTTON, [inTxtBox, outTxtBox, encounterCBx, dialogueCBx](wxCommandEvent& event)
     {
     	wxString userAIPrompt = inTxtBox->GetValue();
 		if (userAIPrompt.IsEmpty())
 			outTxtBox->SetValue("No response.");
-		else if (encounterBtn->GetValue())
+		else if (encounterCBx->GetValue())
 			outTxtBox->SetValue("ENCOUNTER: " + userAIPrompt);
-		else if (dialogueBtn->GetValue())
+		else if (dialogueCBx->GetValue())
 			outTxtBox->SetValue("DIALOGUE: " + userAIPrompt);
 		else
 			outTxtBox->SetValue(userAIPrompt);
     });
 
+    monsterQueryBtn->Bind(wxEVT_BUTTON, [monsterInTxtBox, monsterOutTxtBox](wxCommandEvent& event)
+        {
+            wxString monsterPulled = monsterInTxtBox->GetValue();
+            if (monsterPulled.IsEmpty())
+                monsterOutTxtBox->SetValue("No response.");
+            else
+                monsterOutTxtBox->SetValue(monsterPulled);
+        });
+
     // Event listeners for checkbox clicks
-    encounterBtn->Bind(wxEVT_CHECKBOX, [encounterBtn, dialogueBtn](wxCommandEvent& event)
+    encounterCBx->Bind(wxEVT_CHECKBOX, [encounterCBx, dialogueCBx](wxCommandEvent& event)
     {
     	bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
 		if (isChecked)
-			dialogueBtn->SetValue(false);
+			dialogueCBx->SetValue(false);
     });
 
-	dialogueBtn->Bind(wxEVT_CHECKBOX, [encounterBtn, dialogueBtn](wxCommandEvent& event)
+	dialogueCBx->Bind(wxEVT_CHECKBOX, [encounterCBx, dialogueCBx](wxCommandEvent& event)
 	{
 		bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
         if (isChecked)
-            encounterBtn->SetValue(false);
+            encounterCBx->SetValue(false);
 	});
 
     RIBBON->AddPage(DebugTab, "Debug Tab");
