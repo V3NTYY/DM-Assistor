@@ -13,4 +13,6 @@
 #include <memory.h>
 #include <tchar.h>
 
-// QT Widget (Ribbon) Files
+// WXWIDGETS
+#include <wx/wx.h>
+#include <wx/notebook.h>

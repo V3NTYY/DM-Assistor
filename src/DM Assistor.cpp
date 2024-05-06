@@ -2,8 +2,6 @@
 
 #include "headers/framework.h"
 #include "headers/DM Assistor.h"
-#include <wx/wx.h>
-#include <wx/notebook.h>
 
 /// CONSTANTS ///
 
@@ -11,24 +9,6 @@ const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 720;
 
 /////////////////
-
-/// Main app declaration ///
-class MyApp : public wxApp
-{
-public:
-    virtual bool OnInit();
-};
-
-// MyFrame Class, defines the ribbon and the main window/frame of the application //
-class MyFrame : public wxFrame
-{
-public:
-    MyFrame(const wxString& title);
-    void createCharTab();
-    void createDebugTab();
-private:
-    wxNotebook* RIBBON;
-};
 
 // Defines initialization behavior (creation of main frame)
 bool MyApp::OnInit()
@@ -55,9 +35,7 @@ MyFrame::MyFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title, wxDefau
     RIBBON = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP);
 
     // Load the icon
-    wxIcon icon;
-    icon.LoadFile("src/resources/DMAssistorMain.ico", wxBITMAP_TYPE_ICO);
-    this->SetIcon(icon);
+    this->SetIcon(wxICON(IDI_DMASSISTOR));
 
     // Create all tabs in the ribbon
     createCharTab();
