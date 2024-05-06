@@ -55,7 +55,7 @@ void MyFrame::createCharTab()
 void MyFrame::createDebugTab()
 {
     wxPanel* DebugTab = new wxPanel(RIBBON, wxID_ANY);
-    DebugTab->SetBackgroundColour(wxColour(246, 219, 253));
+	wxColour debugTabColor = wxColour(246, 219, 253);
 
     /// Define all positions and sizes of all elements on the debug tab
     int inTxtBx[4] = { 10, 10, 200, 100 };
@@ -116,6 +116,17 @@ void MyFrame::createDebugTab()
         if (isChecked)
             encounterCBx->SetValue(false);
 	});
+
+	// Set colors for the debug tab
+    inTxtBox->SetBackgroundColour(debugTabColor);
+	outTxtBox->SetBackgroundColour(debugTabColor);
+	aiQueryBtn->SetBackgroundColour(debugTabColor);
+	encounterCBx->SetBackgroundColour(debugTabColor);
+	dialogueCBx->SetBackgroundColour(debugTabColor);
+	monsterInTxtBox->SetBackgroundColour(debugTabColor);
+	monsterOutTxtBox->SetBackgroundColour(debugTabColor);
+	monsterQueryBtn->SetBackgroundColour(debugTabColor);
+    DebugTab->SetBackgroundColour(debugTabColor);
 
     RIBBON->AddPage(DebugTab, "Debug Tab");
 };
