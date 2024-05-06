@@ -46,7 +46,7 @@ MyFrame::MyFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title, wxDefau
 void MyFrame::createCharTab()
 {
     wxPanel* CharTab = new wxPanel(RIBBON, wxID_ANY);
-    CharTab->SetBackgroundColour(wxColour(111, 55, 205));
+    CharTab->SetBackgroundColour(wxColour(184, 140, 195));
 
     RIBBON->AddPage(CharTab, "Character Sheet");
 };
@@ -55,7 +55,7 @@ void MyFrame::createCharTab()
 void MyFrame::createDebugTab()
 {
     wxPanel* DebugTab = new wxPanel(RIBBON, wxID_ANY);
-    DebugTab->SetBackgroundColour(wxColour(255, 255, 255));
+    DebugTab->SetBackgroundColour(wxColour(246, 219, 253));
 
     /// Define all positions and sizes of all elements on the debug tab
     int inTxtBx[4] = { 10, 10, 200, 100 };
