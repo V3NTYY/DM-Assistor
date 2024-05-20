@@ -1,8 +1,5 @@
-// header.h : include file for standard system include files,
-// or project specific include files
-//
-
-#pragma once
+#ifndef FRAMEWORK_H
+#define FRAMEWORK_H
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files
@@ -16,3 +13,8 @@
 // WXWIDGETS
 #include <wx/wx.h>
 #include <wx/notebook.h>
+
+// All other headers
+#include "Stat.h"
+
+#endif

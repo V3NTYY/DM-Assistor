@@ -24,6 +24,15 @@
     <ClInclude Include="src\headers\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\headers\Stat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\headers\Skill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\resources\DMAssistorMain.ico">
@@ -40,6 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DM Assistor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Stat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Skill.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

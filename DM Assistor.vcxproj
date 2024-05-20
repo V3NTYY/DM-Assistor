@@ -141,8 +141,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\headers\DM Assistor.h" />
+    <ClInclude Include="src\headers\Enum.h" />
     <ClInclude Include="src\headers\framework.h" />
     <ClInclude Include="src\headers\Resource.h" />
+    <ClInclude Include="src\headers\Skill.h" />
+    <ClInclude Include="src\headers\Stat.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\resources\DMAssistorMain.ico" />
@@ -153,6 +156,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DM Assistor.cpp" />
+    <ClCompile Include="src\Skill.cpp" />
+    <ClCompile Include="src\Stat.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

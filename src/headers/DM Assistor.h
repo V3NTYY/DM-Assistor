@@ -1,4 +1,3 @@
-#pragma once
 #ifndef DM_ASSISTOR_H
 #define DM_ASSISTOR_H
 

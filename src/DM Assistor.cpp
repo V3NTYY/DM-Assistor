@@ -80,9 +80,9 @@ void MyFrame::createDebugTab()
 	int monsterTextOutputData[4] = { monsterButtonData[0] + monsterButtonData[2] + 5, monsterTextInputData[1], SCREEN_WIDTH - (monsterButtonData[0] + monsterButtonData[2]) - 40, monsterTextInputData[3] };
 
 	/// Placeholder Query Positions & Sizes
-    int sampleQueryTextInputData[4] = { monsterTextInputData[0], monsterTextInputData[1] + monsterTextInputData[3] + 5, monsterTextInputData[2], monsterTextInputData[3] };
-    int sampleQueryButtonData[4] = { sampleQueryTextInputData[0] + sampleQueryTextInputData[2] + 5, sampleQueryTextInputData[1] + (sampleQueryTextInputData[3] / 4), monsterButtonData[2], monsterButtonData[3] };
-    int sampleQueryTextOutputData[4] = { sampleQueryButtonData[0] + sampleQueryButtonData[2] + 5, sampleQueryTextInputData[1], monsterTextOutputData[2], monsterTextOutputData[3] };
+    int skillQueryTextInputData[4] = { monsterTextInputData[0], monsterTextInputData[1] + monsterTextInputData[3] + 5, monsterTextInputData[2], monsterTextInputData[3] };
+    int skillQueryButtonData[4] = { skillQueryTextInputData[0] + skillQueryTextInputData[2] + 5, skillQueryTextInputData[1] + (skillQueryTextInputData[3] / 4), monsterButtonData[2], monsterButtonData[3] };
+    int skillQueryTextOutputData[4] = { skillQueryButtonData[0] + skillQueryButtonData[2] + 5, skillQueryTextInputData[1], monsterTextOutputData[2], monsterTextOutputData[3] };
 
 	/// AI Query elements
     wxTextCtrl* AITextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(AITextInputData[0], AITextInputData[1]), wxSize(AITextInputData[2], AITextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
@@ -97,9 +97,9 @@ void MyFrame::createDebugTab()
 	wxButton* monsterButton = new wxButton(DebugTab, wxID_ANY, "Debug Pull Monster", wxPoint(monsterButtonData[0], monsterButtonData[1]), wxSize(monsterButtonData[2], monsterButtonData[3]));
 
     /// Placeholder Query elements
-    wxTextCtrl* sampleQueryTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(sampleQueryTextInputData[0], sampleQueryTextInputData[1]), wxSize(sampleQueryTextInputData[2], sampleQueryTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-    wxTextCtrl* sampleQueryTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(sampleQueryTextOutputData[0], sampleQueryTextOutputData[1]), wxSize(sampleQueryTextOutputData[2], sampleQueryTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-    wxButton* sampleQueryButton = new wxButton(DebugTab, wxID_ANY, "Sample Query", wxPoint(sampleQueryButtonData[0], sampleQueryButtonData[1]), wxSize(sampleQueryButtonData[2], sampleQueryButtonData[3]));
+    wxTextCtrl* skillQueryTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(skillQueryTextInputData[0], skillQueryTextInputData[1]), wxSize(skillQueryTextInputData[2], skillQueryTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
+    wxTextCtrl* skillQueryTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(skillQueryTextOutputData[0], skillQueryTextOutputData[1]), wxSize(skillQueryTextOutputData[2], skillQueryTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
+    wxButton* skillQueryButton = new wxButton(DebugTab, wxID_ANY, "Look for skill", wxPoint(skillQueryButtonData[0], skillQueryButtonData[1]), wxSize(skillQueryButtonData[2], skillQueryButtonData[3]));
 
 	// Listeners for AI query elements
     AIButton->Bind(wxEVT_BUTTON, [AITextInput, AITextOutput, encounterCheck, dialogCheck](wxCommandEvent& event)
@@ -140,14 +140,25 @@ void MyFrame::createDebugTab()
                 monsterTextOutput->SetValue(monsterQuery);
         });
 
+
 	/// Listeners for placeholder query elements
-    sampleQueryButton->Bind(wxEVT_BUTTON, [sampleQueryTextInput, sampleQueryTextOutput](wxCommandEvent& event)
+    skillQueryButton->Bind(wxEVT_BUTTON, [skillQueryTextInput, skillQueryTextOutput](wxCommandEvent& event)
         {
-            wxString sampleQuery = sampleQueryTextInput->GetValue();
-            if (sampleQuery.IsEmpty())
-                sampleQueryTextOutput->SetValue("No response.");
-            else
-                sampleQueryTextOutput->SetValue(sampleQuery);
+            Stat debugStat = Stat();
+
+			// Create some sample stats for testing
+            debugStat.StrScore = 20;
+            debugStat.DexScore = 14;
+			debugStat.ConScore = 16;
+            debugStat.IntScore = 6;
+            debugStat.WisScore = 8;
+            debugStat.ChaScore = 8;
+            debugStat.Skills[Athletics].proficiency = Expertise;
+			debugStat.Skills[Persuasion].proficiency = Proficiency;
+
+			debugStat.updateModifiables();
+
+            skillQueryTextOutput->SetValue(debugStat.returnSkills());
         });
 
     SetBackgroundColourForAllChildren(DebugTab, debugTabColor);
