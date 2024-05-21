@@ -22,8 +22,12 @@ public:
     MyFrame(const wxString& title);
     void createCharTab();
     void createDebugTab();
+
 private:
     wxNotebook* RIBBON;
+    DiceRoller DMRolls;
+    bool advantage;
+    bool disadvantage;
 };
 
 #endif

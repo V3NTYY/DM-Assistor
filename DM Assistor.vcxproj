@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\headers\DiceRoller.h" />
     <ClInclude Include="src\headers\DM Assistor.h" />
     <ClInclude Include="src\headers\Enum.h" />
     <ClInclude Include="src\headers\framework.h" />
@@ -155,6 +156,7 @@
     <ResourceCompile Include="src\resources\DMAssistor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\DiceRoller.cpp" />
     <ClCompile Include="src\DM Assistor.cpp" />
     <ClCompile Include="src\Skill.cpp" />
     <ClCompile Include="src\Stat.cpp" />

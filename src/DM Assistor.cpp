@@ -67,6 +67,10 @@ void MyFrame::createDebugTab()
     wxPanel* DebugTab = new wxPanel(RIBBON, wxID_ANY);
 	wxColour debugTabColor = wxColour(246, 219, 253);
 
+	DMRolls = DiceRoller();
+    advantage = false;
+    disadvantage = false;
+
     /// AI Query Positions & Sizes
     int AITextInputData[4] = { 10, 10, 200, 100 };
     int AIButtonData[4] = { AITextInputData[0] + AITextInputData[2] + 5, AITextInputData[1], 125, 25 };
@@ -74,15 +78,13 @@ void MyFrame::createDebugTab()
     int dialogCheckData[4] = { AIButtonData[0], encounterCheckData[1] + encounterCheckData[3] + 5, AIButtonData[2], AIButtonData[3]};
     int AITextOutputData[4] = { encounterCheckData[0] + encounterCheckData[2] + 5, AITextInputData[1], SCREEN_WIDTH - (encounterCheckData[0] + encounterCheckData[2]) - 40, AITextInputData[3]};
 
-	/// Monster Query Positions & Sizes
-	int monsterTextInputData[4] = { AITextInputData[0], AITextInputData[1] + AITextInputData[3] + 5, 200, 50};
-	int monsterButtonData[4] = { monsterTextInputData[0] + monsterTextInputData[2] + 5, monsterTextInputData[1] + (monsterTextInputData[3] / 4), 125, 25};
-	int monsterTextOutputData[4] = { monsterButtonData[0] + monsterButtonData[2] + 5, monsterTextInputData[1], SCREEN_WIDTH - (monsterButtonData[0] + monsterButtonData[2]) - 40, monsterTextInputData[3] };
-
-	/// Placeholder Query Positions & Sizes
-    int skillQueryTextInputData[4] = { monsterTextInputData[0], monsterTextInputData[1] + monsterTextInputData[3] + 5, monsterTextInputData[2], monsterTextInputData[3] };
-    int skillQueryButtonData[4] = { skillQueryTextInputData[0] + skillQueryTextInputData[2] + 5, skillQueryTextInputData[1] + (skillQueryTextInputData[3] / 4), monsterButtonData[2], monsterButtonData[3] };
-    int skillQueryTextOutputData[4] = { skillQueryButtonData[0] + skillQueryButtonData[2] + 5, skillQueryTextInputData[1], monsterTextOutputData[2], monsterTextOutputData[3] };
+	/// Dice Roller Positions & Sizes
+	int diceRollTextInputData[4] = { AITextInputData[0], AITextInputData[1] + AITextInputData[3] + 5, 200, 50};
+	int diceRollButtonData[4] = { diceRollTextInputData[0] + diceRollTextInputData[2] + 5, diceRollTextInputData[1] + (diceRollTextInputData[3] / 4), 125, 25};
+	int diceRollTextOutputData[4] = { diceRollButtonData[0] + diceRollButtonData[2] + 5, diceRollTextInputData[1], SCREEN_WIDTH - (diceRollButtonData[0] + diceRollButtonData[2]) - 40, diceRollTextInputData[3] };
+	int advantageCheckData[4] = { diceRollButtonData[0], diceRollButtonData[1] + diceRollButtonData[3] + 5, diceRollButtonData[2], diceRollButtonData[3] };
+	int disadvantageCheckData[4] = { diceRollButtonData[0], advantageCheckData[1] + advantageCheckData[3] + 5, diceRollButtonData[2], diceRollButtonData[3] };
+	int karmicDiceCheckData[4] = { disadvantageCheckData[0], disadvantageCheckData[1] + disadvantageCheckData[3] + 5, disadvantageCheckData[2], disadvantageCheckData[3] };
 
 	/// AI Query elements
     wxTextCtrl* AITextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(AITextInputData[0], AITextInputData[1]), wxSize(AITextInputData[2], AITextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
@@ -91,15 +93,13 @@ void MyFrame::createDebugTab()
 	wxCheckBox* encounterCheck = new wxCheckBox(DebugTab, wxID_ANY, "Generate encounter", wxPoint(encounterCheckData[0], encounterCheckData[1]), wxSize(encounterCheckData[2], encounterCheckData[3]));
     wxCheckBox* dialogCheck = new wxCheckBox(DebugTab, wxID_ANY, "Generate dialogue", wxPoint(dialogCheckData[0], dialogCheckData[1]), wxSize(dialogCheckData[2], dialogCheckData[3]));
 
-	//// Monster Query elements
-	wxTextCtrl* monsterTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(monsterTextInputData[0], monsterTextInputData[1]), wxSize(monsterTextInputData[2], monsterTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-	wxTextCtrl* monsterTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(monsterTextOutputData[0], monsterTextOutputData[1]), wxSize(monsterTextOutputData[2], monsterTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-	wxButton* monsterButton = new wxButton(DebugTab, wxID_ANY, "Debug Pull Monster", wxPoint(monsterButtonData[0], monsterButtonData[1]), wxSize(monsterButtonData[2], monsterButtonData[3]));
-
-    /// Placeholder Query elements
-    wxTextCtrl* skillQueryTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(skillQueryTextInputData[0], skillQueryTextInputData[1]), wxSize(skillQueryTextInputData[2], skillQueryTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-    wxTextCtrl* skillQueryTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(skillQueryTextOutputData[0], skillQueryTextOutputData[1]), wxSize(skillQueryTextOutputData[2], skillQueryTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-    wxButton* skillQueryButton = new wxButton(DebugTab, wxID_ANY, "Look for skill", wxPoint(skillQueryButtonData[0], skillQueryButtonData[1]), wxSize(skillQueryButtonData[2], skillQueryButtonData[3]));
+	//// Dice Roller elements
+	wxTextCtrl* diceRollTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "20", wxPoint(diceRollTextInputData[0], diceRollTextInputData[1]), wxSize(diceRollTextInputData[2], diceRollTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
+	wxTextCtrl* diceRollTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "Awaiting roll...", wxPoint(diceRollTextOutputData[0], diceRollTextOutputData[1]), wxSize(diceRollTextOutputData[2], diceRollTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
+	wxButton* diceRollButton = new wxButton(DebugTab, wxID_ANY, "Roll Dice", wxPoint(diceRollButtonData[0], diceRollButtonData[1]), wxSize(diceRollButtonData[2], diceRollButtonData[3]));
+	wxCheckBox* advantageCheck = new wxCheckBox(DebugTab, wxID_ANY, "Advantage", wxPoint(advantageCheckData[0], advantageCheckData[1]), wxSize(advantageCheckData[2], advantageCheckData[3]));
+	wxCheckBox* disadvantageCheck = new wxCheckBox(DebugTab, wxID_ANY, "Disadvantage", wxPoint(disadvantageCheckData[0], disadvantageCheckData[1]), wxSize(disadvantageCheckData[2], disadvantageCheckData[3]));
+	wxCheckBox* karmicDiceCheck = new wxCheckBox(DebugTab, wxID_ANY, "Karmic Dice", wxPoint(karmicDiceCheckData[0], karmicDiceCheckData[1]), wxSize(karmicDiceCheckData[2], karmicDiceCheckData[3]));
 
 	// Listeners for AI query elements
     AIButton->Bind(wxEVT_BUTTON, [AITextInput, AITextOutput, encounterCheck, dialogCheck](wxCommandEvent& event)
@@ -130,35 +130,30 @@ void MyFrame::createDebugTab()
                 encounterCheck->SetValue(false);
         });
 
-	/// Listeners for monster query elements
-    monsterButton->Bind(wxEVT_BUTTON, [monsterTextInput, monsterTextOutput](wxCommandEvent& event)
+
+	/// Listeners for diceRoll query elements
+    advantageCheck->Bind(wxEVT_CHECKBOX, [this, advantageCheck](wxCommandEvent& event)
         {
-            wxString monsterQuery = monsterTextInput->GetValue();
-            if (monsterQuery.IsEmpty())
-                monsterTextOutput->SetValue("No response.");
-            else
-                monsterTextOutput->SetValue(monsterQuery);
+            advantage = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
         });
-
-
-	/// Listeners for placeholder query elements
-    skillQueryButton->Bind(wxEVT_BUTTON, [skillQueryTextInput, skillQueryTextOutput](wxCommandEvent& event)
+    disadvantageCheck->Bind(wxEVT_CHECKBOX, [this, disadvantageCheck](wxCommandEvent& event)
         {
-            Stat debugStat = Stat();
+            disadvantage = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
+        });
+	karmicDiceCheck->Bind(wxEVT_CHECKBOX, [this, karmicDiceCheck](wxCommandEvent& event)
+		{
+			DMRolls.toggleKarmicDice();
+		});
+    diceRollButton->Bind(wxEVT_BUTTON, [this, diceRollTextInput, diceRollTextOutput](wxCommandEvent& event)
+        {
+            int diceSides = 20;
 
-			// Create some sample stats for testing
-            debugStat.StrScore = 20;
-            debugStat.DexScore = 14;
-			debugStat.ConScore = 16;
-            debugStat.IntScore = 6;
-            debugStat.WisScore = 8;
-            debugStat.ChaScore = 8;
-            debugStat.Skills[Athletics].proficiency = Expertise;
-			debugStat.Skills[Persuasion].proficiency = Proficiency;
+            wxString diceRollQuery = diceRollTextInput->GetValue();
+            diceRollQuery.ToInt(&diceSides);
 
-			debugStat.updateModifiables();
+            int rolledValue = DMRolls.roll(diceSides, 0, advantage, disadvantage);
 
-            skillQueryTextOutput->SetValue(debugStat.returnSkills());
+            diceRollTextOutput->SetValue(std::to_wstring(rolledValue) + "\n" + DMRolls.debugPrint());
         });
 
     SetBackgroundColourForAllChildren(DebugTab, debugTabColor);

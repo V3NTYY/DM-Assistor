@@ -16,5 +16,6 @@
 
 // All other headers
 #include "Stat.h"
+#include "DiceRoller.h"
 
 #endif

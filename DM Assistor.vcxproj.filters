@@ -33,6 +33,9 @@
     <ClInclude Include="src\headers\Skill.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\headers\DiceRoller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\resources\DMAssistorMain.ico">
@@ -55,6 +58,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Skill.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DiceRoller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
