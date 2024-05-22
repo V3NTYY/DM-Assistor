@@ -11,6 +11,9 @@ void DiceRoller::toggleKarmicDice()
 
 int DiceRoller::roll(int sides, int modifier, bool advantage, bool disadvantage)
 {
+	if (sides == 0)
+		return 0;
+
 	int total = 0;
 	int firstRoll = 0;
 	int secondRoll = 0;
@@ -43,6 +46,7 @@ int DiceRoller::roll(int sides, int modifier, bool advantage, bool disadvantage)
 		goodRolls++;
 	}
 
+	// For now, just reroll for karmic dice. We can expand more on it later.
 	if (karmicDice && (goodRolls >= 6 || badRolls >= 6)) {
 		goodRolls = 0;
 		badRolls = 0;

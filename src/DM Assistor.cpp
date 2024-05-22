@@ -8,6 +8,36 @@
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
+std::map<std::string, int> abilityMap = {
+    {"strength", Strength},
+    {"dexterity", Dexterity},
+    {"wisdom", Wisdom},
+    {"intelligence", Intelligence},
+    {"constitution", Constitution},
+    {"charisma", Charisma}
+};
+
+std::map<std::string, int> skillMap = {
+    {"athletics", Athletics},
+    {"acrobatics", Acrobatics},
+    {"sleightofhand", SleightOfHand},
+    {"stealth", Stealth},
+    {"arcana", Arcana},
+    {"history", History},
+    {"investigation", Investigation},
+    {"nature", Nature},
+    {"religion", Religion},
+    {"animalhandling", AnimalHandling},
+    {"insight", Insight},
+    {"medicine", Medicine},
+    {"perception", Perception},
+    {"survival", Survival},
+    {"deception", Deception},
+    {"intimidation", Intimidation},
+    {"performance", Performance},
+    {"persuasion", Persuasion}
+};
+
 /////////////////
 
 // Defines initialization behavior (creation of main frame)
@@ -20,6 +50,13 @@ bool MyApp::OnInit()
 
 // Macro that acts as main() entry point
 wxIMPLEMENT_APP(MyApp);
+
+void LogMessage(wxTextCtrl* reference, const wxString& message, bool clear)
+{
+	if (clear)
+		reference->Clear();
+    reference->AppendText(message + "\n");
+}
 
 /// Method that handles creation of the main frame/window.
 MyFrame::MyFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize)
@@ -67,96 +104,117 @@ void MyFrame::createDebugTab()
     wxPanel* DebugTab = new wxPanel(RIBBON, wxID_ANY);
 	wxColour debugTabColor = wxColour(246, 219, 253);
 
-	DMRolls = DiceRoller();
-    advantage = false;
-    disadvantage = false;
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxTextCtrl* debugTextCtrl = new wxTextCtrl(DebugTab, wxID_ANY, "Type 'commands' and hit ENTER to view commands.", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER);
 
-    /// AI Query Positions & Sizes
-    int AITextInputData[4] = { 10, 10, 200, 100 };
-    int AIButtonData[4] = { AITextInputData[0] + AITextInputData[2] + 5, AITextInputData[1], 125, 25 };
-    int encounterCheckData[4] = { AIButtonData[0], AIButtonData[1] + AIButtonData[3] + 5, AIButtonData[2], AIButtonData[3]};
-    int dialogCheckData[4] = { AIButtonData[0], encounterCheckData[1] + encounterCheckData[3] + 5, AIButtonData[2], AIButtonData[3]};
-    int AITextOutputData[4] = { encounterCheckData[0] + encounterCheckData[2] + 5, AITextInputData[1], SCREEN_WIDTH - (encounterCheckData[0] + encounterCheckData[2]) - 40, AITextInputData[3]};
-
-	/// Dice Roller Positions & Sizes
-	int diceRollTextInputData[4] = { AITextInputData[0], AITextInputData[1] + AITextInputData[3] + 5, 200, 50};
-	int diceRollButtonData[4] = { diceRollTextInputData[0] + diceRollTextInputData[2] + 5, diceRollTextInputData[1] + (diceRollTextInputData[3] / 4), 125, 25};
-	int diceRollTextOutputData[4] = { diceRollButtonData[0] + diceRollButtonData[2] + 5, diceRollTextInputData[1], SCREEN_WIDTH - (diceRollButtonData[0] + diceRollButtonData[2]) - 40, diceRollTextInputData[3] };
-	int advantageCheckData[4] = { diceRollButtonData[0], diceRollButtonData[1] + diceRollButtonData[3] + 5, diceRollButtonData[2], diceRollButtonData[3] };
-	int disadvantageCheckData[4] = { diceRollButtonData[0], advantageCheckData[1] + advantageCheckData[3] + 5, diceRollButtonData[2], diceRollButtonData[3] };
-	int karmicDiceCheckData[4] = { disadvantageCheckData[0], disadvantageCheckData[1] + disadvantageCheckData[3] + 5, disadvantageCheckData[2], disadvantageCheckData[3] };
-
-	/// AI Query elements
-    wxTextCtrl* AITextInput = new wxTextCtrl(DebugTab, wxID_ANY, "", wxPoint(AITextInputData[0], AITextInputData[1]), wxSize(AITextInputData[2], AITextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-    wxTextCtrl* AITextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "No response.", wxPoint(AITextOutputData[0], AITextOutputData[1]), wxSize(AITextOutputData[2], AITextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-    wxButton* AIButton = new wxButton(DebugTab, wxID_ANY, "Debug AI Prompt", wxPoint(AIButtonData[0], AIButtonData[1]), wxSize(AIButtonData[2], AIButtonData[3]));
-	wxCheckBox* encounterCheck = new wxCheckBox(DebugTab, wxID_ANY, "Generate encounter", wxPoint(encounterCheckData[0], encounterCheckData[1]), wxSize(encounterCheckData[2], encounterCheckData[3]));
-    wxCheckBox* dialogCheck = new wxCheckBox(DebugTab, wxID_ANY, "Generate dialogue", wxPoint(dialogCheckData[0], dialogCheckData[1]), wxSize(dialogCheckData[2], dialogCheckData[3]));
-
-	//// Dice Roller elements
-	wxTextCtrl* diceRollTextInput = new wxTextCtrl(DebugTab, wxID_ANY, "20", wxPoint(diceRollTextInputData[0], diceRollTextInputData[1]), wxSize(diceRollTextInputData[2], diceRollTextInputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP);
-	wxTextCtrl* diceRollTextOutput = new wxTextCtrl(DebugTab, wxID_ANY, "Awaiting roll...", wxPoint(diceRollTextOutputData[0], diceRollTextOutputData[1]), wxSize(diceRollTextOutputData[2], diceRollTextOutputData[3]), wxTE_MULTILINE | wxTE_WORDWRAP | wxTE_NO_VSCROLL | wxTE_READONLY);
-	wxButton* diceRollButton = new wxButton(DebugTab, wxID_ANY, "Roll Dice", wxPoint(diceRollButtonData[0], diceRollButtonData[1]), wxSize(diceRollButtonData[2], diceRollButtonData[3]));
-	wxCheckBox* advantageCheck = new wxCheckBox(DebugTab, wxID_ANY, "Advantage", wxPoint(advantageCheckData[0], advantageCheckData[1]), wxSize(advantageCheckData[2], advantageCheckData[3]));
-	wxCheckBox* disadvantageCheck = new wxCheckBox(DebugTab, wxID_ANY, "Disadvantage", wxPoint(disadvantageCheckData[0], disadvantageCheckData[1]), wxSize(disadvantageCheckData[2], disadvantageCheckData[3]));
-	wxCheckBox* karmicDiceCheck = new wxCheckBox(DebugTab, wxID_ANY, "Karmic Dice", wxPoint(karmicDiceCheckData[0], karmicDiceCheckData[1]), wxSize(karmicDiceCheckData[2], karmicDiceCheckData[3]));
-
-	// Listeners for AI query elements
-    AIButton->Bind(wxEVT_BUTTON, [AITextInput, AITextOutput, encounterCheck, dialogCheck](wxCommandEvent& event)
-		{
-    	wxString userQuery = AITextInput->GetValue();
-		if (userQuery.IsEmpty())
-			AITextOutput->SetValue("No response.");
-		else if (encounterCheck->GetValue())
-			AITextOutput->SetValue("ENCOUNTER: " + userQuery);
-		else if (dialogCheck->GetValue())
-			AITextOutput->SetValue("DIALOGUE: " + userQuery);
-
-		else
-			AITextOutput->SetValue(userQuery);
-		});
-
-    encounterCheck->Bind(wxEVT_CHECKBOX, [encounterCheck, dialogCheck](wxCommandEvent& event)
-        {
-            bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
-            if (isChecked)
-                dialogCheck->SetValue(false);
-        });
-
-    dialogCheck->Bind(wxEVT_CHECKBOX, [encounterCheck, dialogCheck](wxCommandEvent& event)
-        {
-            bool isChecked = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
-            if (isChecked)
-                encounterCheck->SetValue(false);
-        });
-
-
-	/// Listeners for diceRoll query elements
-    advantageCheck->Bind(wxEVT_CHECKBOX, [this, advantageCheck](wxCommandEvent& event)
-        {
-            advantage = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
-        });
-    disadvantageCheck->Bind(wxEVT_CHECKBOX, [this, disadvantageCheck](wxCommandEvent& event)
-        {
-            disadvantage = static_cast<wxCheckBox*>(event.GetEventObject())->GetValue();
-        });
-	karmicDiceCheck->Bind(wxEVT_CHECKBOX, [this, karmicDiceCheck](wxCommandEvent& event)
-		{
-			DMRolls.toggleKarmicDice();
-		});
-    diceRollButton->Bind(wxEVT_BUTTON, [this, diceRollTextInput, diceRollTextOutput](wxCommandEvent& event)
-        {
-            int diceSides = 20;
-
-            wxString diceRollQuery = diceRollTextInput->GetValue();
-            diceRollQuery.ToInt(&diceSides);
-
-            int rolledValue = DMRolls.roll(diceSides, 0, advantage, disadvantage);
-
-            diceRollTextOutput->SetValue(std::to_wstring(rolledValue) + "\n" + DMRolls.debugPrint());
-        });
+	sizer->Add(debugTextCtrl, 1, wxEXPAND);
+	DebugTab->SetSizer(sizer);
 
     SetBackgroundColourForAllChildren(DebugTab, debugTabColor);
     DebugTab->SetBackgroundColour(debugTabColor);
     RIBBON->AddPage(DebugTab, "Debug Tab");
+
+    // Testing variables
+    testStat = Stat();
+	testRoller = DiceRoller();
+
+    // Key listener for debugging
+    Bind(wxEVT_TEXT_ENTER, [this, debugTextCtrl](wxCommandEvent& event) {
+    	/// Parse command
+    	std::string command = debugTextCtrl->GetValue().ToStdString();
+    	std::istringstream iss(command);
+
+    	std::string words[5];
+    	for (int i = 0; i < 5; i++)
+    		words[i] = "0";
+
+    	int i = 0;
+    	for (std::string s; iss >> s && i < 5; ++i)
+    		words[i] = s;
+
+    	///// COMMAND HANDLING
+    	if (words[0] == "commands")
+    		LogMessage(debugTextCtrl, "Commands:"
+    		"\nstat -change [ability] [value]"
+    		"\nstat -list [skills/saves]"
+    		"\nstat -change -proficiency [ability/skill] [0 = none, 1 = prof, 2 = exp]"
+    		"\ndice -roll d[4/8/12/20] [skill]"
+    		"\ndice -advantage [0 = none, 1 = advantage, 2 = disadvantage]"
+    		"\ndice -karmic (this toggles karmic dice, no other params needed)"
+    		"", true);
+                
+    	if (words[0] == "stat") {
+    		if (words[1] == "-change") { /// Modify a stat
+    			bool saveProf = std::stoi(words[4]) != 0;
+    			if (words[2] == "-proficiency") {
+    				if (skillMap.count(words[3]) > 0)
+    					testStat.updateSkillProf(skillMap[words[3]], std::stoi(words[4]));
+    				if (abilityMap.count(words[3]) > 0)
+    					testStat.updateSaveProf(abilityMap[words[3]], saveProf);
+    			}
+
+    			if (abilityMap.count(words[2]) > 0)
+    				testStat.updateScore(abilityMap[words[2]], std::stoi(words[3]));
+
+    			LogMessage(debugTextCtrl, "Update made.", true);
+    		}
+    		if (words[1] == "-list") { /// Return skills
+    			if (words[2] == "skills")
+    				LogMessage(debugTextCtrl, testStat.returnSkills(), true);
+    			if (words[2] == "saves") {
+    				LogMessage(debugTextCtrl, testStat.returnSaves(), true);
+    			}
+    		}
+    	}
+
+    	if (words[0] == "dice")
+    	{
+    		if (words[1] == "-roll")
+    		{
+    			/// Cut the "d" out of the d20 param
+    			std::string param3 = words[2];
+    			param3.erase(std::remove_if(param3.begin(), param3.end(), [](char c) { return !std::isdigit(c); }), param3.end());
+    			int diceSides = std::stoi(param3);
+
+    			if (words[3] == "0") {
+    				std::string result = std::to_string(testRoller.roll(diceSides, 0, advantage, disadvantage));
+    				LogMessage(debugTextCtrl, "Rolled a " + words[2] + ": " + result, true);
+    			}
+    			else {
+    				Skill skill = testStat.getSkill(skillMap[words[3]]);
+    				std::string result = std::to_string(testRoller.roll(diceSides, skill.value, advantage, disadvantage));
+    				LogMessage(debugTextCtrl, "Rolled for " + skill.getSkillName() + ": " + result, true);
+    			}
+    		}
+    		if (words[1] == "-advantage")
+    		{
+    			advantage = false;
+    			disadvantage = false;
+
+    			if (std::stoi(words[2]) == 1) {
+    				advantage = true;
+    				disadvantage = false;
+    			}
+    			if (std::stoi(words[2]) == 2) {
+    				advantage = false;
+    				disadvantage = true;
+    			}
+
+    			std::string result = "";
+    			if (advantage)
+    				result = "with advantage";
+    			if (disadvantage)
+    				result = "with disadvantage";
+    			if (advantage && disadvantage || (!advantage && !disadvantage))
+    				result = "normally";
+    			LogMessage(debugTextCtrl, "Dice now roll " + result, true);
+    		}
+    		if (words[1] == "-karmic") {
+    			testRoller.toggleKarmicDice();
+    			LogMessage(debugTextCtrl, "Toggle invert for Karmic", true);
+    		}
+    	}
+    });
+
+
 };

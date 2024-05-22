@@ -3,6 +3,9 @@
 
 #include "Resource.h" // Used for icons and resource file
 #include <string>
+#include <vector>
+#include <sstream>
+#include <map>
 
 const std::string PROGRAM_NAME = "DM Assistor";
 
@@ -25,7 +28,8 @@ public:
 
 private:
     wxNotebook* RIBBON;
-    DiceRoller DMRolls;
+    Stat testStat;
+    DiceRoller testRoller;
     bool advantage;
     bool disadvantage;
 };

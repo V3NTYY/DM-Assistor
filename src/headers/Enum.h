@@ -2,7 +2,7 @@
 #define ENUM_H
 
 enum StatType {
-    Strength = 1,
+    Strength = 0,
     Dexterity,
     Constitution,
     Intelligence,
