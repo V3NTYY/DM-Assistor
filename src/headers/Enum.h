@@ -1,6 +1,9 @@
 #ifndef ENUM_H
 #define ENUM_H
 
+#include "map"
+#include <string>
+
 enum StatType {
     Strength = 0,
     Dexterity,
