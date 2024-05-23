@@ -26,6 +26,8 @@ Stat::Stat()
 	for (int i = 0; i <= 17; i++)
 		Skills.emplace_back(Skill(i));
 
+	SpellList = SpellBook();
+
 	updateModifiables();
 }
 
@@ -221,6 +223,11 @@ Skill Stat::getSkill(int skill)
 		return Skills[0];
 
 	return Skills[skill];
+}
+
+SpellBook& Stat::getSpellBook()
+{
+	return SpellList;
 }
 
 int Stat::getPassivePerception()

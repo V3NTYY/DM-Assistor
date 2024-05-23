@@ -1,6 +1,7 @@
 #include "Enum.h"
 #include "Skill.h"
 #include <vector>
+#include "SpellBook.h"
 
 #ifndef STAT_H
 #define STAT_H
@@ -8,7 +9,6 @@
 // Create a class for all of these typedefs, replace "int" with the class name
 typedef int Condition;
 typedef int Feat;
-typedef int SpellBook;
 typedef int Race;
 
 class Stat {
@@ -26,6 +26,7 @@ public:
 
 	/// Use the methods to directly access stats
 	Skill getSkill(int skill);
+	SpellBook& getSpellBook();
 	int getPassivePerception();
 	int getPassiveInvestigation();
 	std::vector<int> getScoreMods();
@@ -40,10 +41,6 @@ public:
 	/// Method used to update all calculated stats
 	void updateModifiables();
 
-	std::vector<Condition> Conditions; // Conditions
-	std::vector<Feat> Feats; // Feats
-	SpellBook Spells; // All spells and spell slot charges
-
 private:
 
 	/// Hard-selected stats
@@ -52,6 +49,7 @@ private:
 	int AC;
 	int HP, MaxHP;
 	int Speed;
+	SpellBook SpellList; // All spells and spell slot charges
 
 	/// Calculated stats
 	std::vector<Skill> Skills; // Skills

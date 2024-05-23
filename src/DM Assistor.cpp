@@ -138,6 +138,12 @@ void MyFrame::createDebugTab()
     		"\nstat -change [ability] [value]"
     		"\nstat -list [skills/saves]"
     		"\nstat -change -proficiency [ability/skill] [0 = none, 1 = prof, 2 = exp]"
+    		"\nspell -list"
+            "\nspell -consume [slot]"
+            "\nspell -replenish [slot]"
+            "\nspell -max [slot] [new max slots]"
+            "\nspell -add [name] [description_with_no_spaces] [level]"
+            "\nspell -remove [name] [level]"
     		"\ndice -roll d[4/8/12/20] [skill]"
     		"\ndice -advantage [0 = none, 1 = advantage, 2 = disadvantage]"
     		"\ndice -karmic (this toggles karmic dice, no other params needed)"
@@ -214,6 +220,50 @@ void MyFrame::createDebugTab()
     			LogMessage(debugTextCtrl, "Toggle invert for Karmic", true);
     		}
     	}
+
+        if (words[0] == "spell")
+        {
+            if (words[1] == "-list")
+                LogMessage(debugTextCtrl, testStat.getSpellBook().printBook(), true);
+
+            if (words[1] == "-consume")
+            {
+                if (testStat.getSpellBook().expendSlot(std::stoi(words[2])))
+					LogMessage(debugTextCtrl, "Slot " + words[2] + " expended.", true);
+                else
+                    LogMessage(debugTextCtrl, "Failure to expend slot.", true);
+            }
+            if (words[1] == "-replenish")
+            {
+                if (testStat.getSpellBook().replenishSlot(std::stoi(words[2])))
+					LogMessage(debugTextCtrl, "Slot " + words[2] + " replenished.", true);
+				else
+					LogMessage(debugTextCtrl, "Failure to replenish slot.", true);
+            }
+            if (words[1] == "-max")
+            {
+				if (testStat.getSpellBook().modifySlotMax(std::stoi(words[2]), std::stoi(words[3])))
+					LogMessage(debugTextCtrl, "Slot " + words[2] + " max set to " + words[3], true);
+                else
+					LogMessage(debugTextCtrl, "Failure to modify slot max.", true);
+            }
+        	if (words[1] == "-add")
+        	{
+        		Spell newSpell = Spell(words[2], words[3], std::stoi(words[4]));
+        		if (testStat.getSpellBook().addSpell(newSpell))
+                    LogMessage(debugTextCtrl, "Spell " + words[2] + " added.", true);
+        		else
+        			LogMessage(debugTextCtrl, "Failure to add spell.", true);
+        	}
+			if (words[1] == "-remove")
+			{
+                Spell newSpell = Spell(words[2], "debug", std::stoi(words[3]));
+				if (testStat.getSpellBook().removeSpell(newSpell))
+                    LogMessage(debugTextCtrl, "Spell " + words[2] + " removed.", true);
+				else 
+                    LogMessage(debugTextCtrl, "Failure to remove spell.", true);
+			}
+        }
     });
 
 
