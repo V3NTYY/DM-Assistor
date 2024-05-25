@@ -9,5 +9,7 @@ public:
         NORMAL
     };
 
+    Feature();
+
 private:
 };
