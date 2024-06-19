@@ -1,19 +1,20 @@
 #include "Enum.h"
 #include "Skill.h"
 #include <vector>
-#include "SpellBook.h"
+#include "SpellBook.h".
+#include "Condition.h"
 
 #ifndef STAT_H
 #define STAT_H
 
 // Create a class for all of these typedefs, replace "int" with the class name
-typedef int Condition;
 typedef int Feat;
 typedef int Race;
 
 class Stat {
 public:
     Stat();
+	void initConditions();
 
 	/// Use the methods to apply changes to a statblock
 	void updateScore(int score, int newValue);
@@ -23,6 +24,7 @@ public:
 	void updateMaxHealth(int newValue);
 	void updateAC(int newValue);
 	void updateSpeed(int newValue);
+	bool toggleCondition(int newValue);
 
 	/// Use the methods to directly access stats
 	Skill getSkill(int skill);
@@ -35,6 +37,7 @@ public:
 	int getSpeed();
 	int getHealth();
 	int getMaxHealth();
+	std::vector<Condition> getActiveConditions();
 	std::string returnSkills();
 	std::string returnSaves();
 
@@ -53,6 +56,7 @@ private:
 
 	/// Calculated stats
 	std::vector<Skill> Skills; // Skills
+	std::vector<Condition> Conditions; // Conditions
 	int StrMod, DexMod, ConMod, IntMod, WisMod, ChaMod; // Ability Score Modifiers
 	int StrSave, DexSave, ConSave, IntSave, WisSave, ChaSave; // Saving Throws
 	int ProfBonus;

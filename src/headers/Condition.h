@@ -5,7 +5,7 @@
 class Condition
 {
 public:
-	Condition() : name(""), description(""), isApplied(false) {}
+	Condition() : name("Null"), description("Null"), isApplied(false) {}
 	Condition(std::string Name, std::string Desc, bool Active) : name(Name), description(Desc), isApplied(Active) {}
 	std::string getName() const { return name; }
 	std::string getDesc() const { return description; }

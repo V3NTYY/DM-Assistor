@@ -147,6 +147,8 @@ void MyFrame::createDebugTab()
     		"\ndice -roll d[4/8/12/20] [skill]"
     		"\ndice -advantage [0 = none, 1 = advantage, 2 = disadvantage]"
     		"\ndice -karmic (this toggles karmic dice, no other params needed)"
+            "\ncondition -toggle [index of condition, goes 1-14]"
+            "\ncondition -list"
     		"", true);
                 
     	if (words[0] == "stat") {
@@ -262,6 +264,27 @@ void MyFrame::createDebugTab()
                     LogMessage(debugTextCtrl, "Spell " + words[2] + " removed.", true);
 				else 
                     LogMessage(debugTextCtrl, "Failure to remove spell.", true);
+			}
+        }
+
+        if (words[0] == "condition") 
+        {
+			if (words[1] == "-toggle")
+			{
+				if (testStat.toggleCondition(std::stoi(words[2])))
+					LogMessage(debugTextCtrl, "Condition toggled.", true);
+				else
+					LogMessage(debugTextCtrl, "Failure to toggle condition.", true);
+			}
+			if (words[1] == "-list")
+			{
+				std::string result = "";
+				for (Condition c : testStat.getActiveConditions())
+					result += c.getName() + ": " + c.getDesc() + "\n";
+                if (result == "")
+					LogMessage(debugTextCtrl, "No conditions active.", true);
+				else
+					LogMessage(debugTextCtrl, "Active conditions:\n" + result, true);
 			}
         }
     });

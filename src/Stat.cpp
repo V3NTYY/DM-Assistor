@@ -28,7 +28,30 @@ Stat::Stat()
 
 	SpellList = SpellBook();
 
+	initConditions();
 	updateModifiables();
+}
+
+void Stat::initConditions()
+{
+	for (int i = 0; i <= 15; i++)
+		Conditions.emplace_back(Condition("Null", "Null", false));
+
+	Conditions[0] = Condition("Null", "Null", false);
+	Conditions[Blinded] = Condition("Blinded", "A blinded creature can't see and automatically fails any ability check that requires sight.", false);
+	Conditions[Charmed] = Condition("Charmed", "A charmed creature can't attack the charmer or target the charmer with harmful abilities or magical effects.", false);
+	Conditions[Deafened] = Condition("Deafened", "A deafened creature can't hear and automatically fails any ability check that requires hearing.", false);
+	Conditions[Frightened] = Condition("Frightened", "A frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight.", false);
+	Conditions[Grappled] = Condition("Grappled", "A grappled creature's speed becomes 0, and it can't benefit from any bonus to its speed.", false);
+	Conditions[Incapacitated] = Condition("Incapacitated", "An incapacitated creature can't take actions or reactions.", false);
+	Conditions[Invisible] = Condition("Invisible", "An invisible creature is impossible to see without the aid of magic or a special sense. For the purpose of hiding, the creature is heavily obscured.", false);
+	Conditions[Paralyzed] = Condition("Paralyzed", "A paralyzed creature is incapacitated and can't move or speak.", false);
+	Conditions[Petrified] = Condition("Petrified", "A petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone). Its weight increases by a factor of ten, and it ceases aging.", false);
+	Conditions[Poisoned] = Condition("Poisoned", "A poisoned creature has disadvantage on attack rolls and ability checks.", false);
+	Conditions[Prone] = Condition("Prone", "A prone creature's only movement option is to crawl, unless it stands up and thereby ends the condition.", false);
+	Conditions[Restrained] = Condition("Restrained", "A restrained creature's speed becomes 0, and it can't benefit from any bonus to its speed.", false);
+	Conditions[Stunned] = Condition("Stunned", "A stunned creature is incapacitated, can't move, and can speak only falteringly.", false);
+	Conditions[Unconscious] = Condition("Unconscious", "An unconscious creature is incapacitated, can't move or speak, and is unaware of its surroundings.", false);
 }
 
 void Stat::updateModifiables()
@@ -217,6 +240,18 @@ void Stat::updateSpeed(int newValue)
 		Speed = 0;
 }
 
+bool Stat::toggleCondition(int newValue)
+{
+	if (newValue >= Conditions.size() || newValue < 0)
+		return false;
+
+	if (Conditions[newValue].isActive())
+		Conditions[newValue].setActive(false);
+	else
+		Conditions[newValue].setActive(true);
+	return true;
+}
+
 Skill Stat::getSkill(int skill)
 {
 	if (skill >= Skills.size())
@@ -270,5 +305,14 @@ int Stat::getHealth()
 int Stat::getMaxHealth()
 {
 	return MaxHP;
+}
+
+std::vector<Condition> Stat::getActiveConditions()
+{
+	std::vector<Condition> activeConditions;
+	for (Condition& condition : Conditions)
+		if (condition.isActive())
+			activeConditions.push_back(condition);
+	return activeConditions;
 }
 
