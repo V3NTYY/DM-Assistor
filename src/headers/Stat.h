@@ -1,15 +1,12 @@
-#include "Enum.h"
-#include "Skill.h"
-#include <vector>
-#include "SpellBook.h".
-#include "Condition.h"
-
 #ifndef STAT_H
 #define STAT_H
 
-// Create a class for all of these typedefs, replace "int" with the class name
-typedef int Feat;
-typedef int Race;
+#include "Enum.h"
+#include "Skill.h"
+#include "Feature.h"
+#include "SpellBook.h".
+#include "Condition.h"
+#include <vector>
 
 class Stat {
 public:
@@ -26,6 +23,10 @@ public:
 	void updateSpeed(int newValue);
 	bool toggleCondition(int newValue);
 
+	/// Feature removal/addition
+	bool addFeat(Feature f);
+	bool removeFeat(Feature f);
+
 	/// Use the methods to directly access stats
 	Skill getSkill(int skill);
 	SpellBook& getSpellBook();
@@ -38,11 +39,12 @@ public:
 	int getHealth();
 	int getMaxHealth();
 	std::vector<Condition> getActiveConditions();
+	std::vector<Feature> getFeatures();
 	std::string returnSkills();
 	std::string returnSaves();
 
 	/// Method used to update all calculated stats
-	void updateModifiables();
+	void updateModifiables(bool updateFeats);
 
 private:
 
@@ -53,10 +55,11 @@ private:
 	int HP, MaxHP;
 	int Speed;
 	SpellBook SpellList; // All spells and spell slot charges
+	std::vector<Condition> Conditions; // Conditions
+	std::vector<Feature> Features; // Features
 
 	/// Calculated stats
 	std::vector<Skill> Skills; // Skills
-	std::vector<Condition> Conditions; // Conditions
 	int StrMod, DexMod, ConMod, IntMod, WisMod, ChaMod; // Ability Score Modifiers
 	int StrSave, DexSave, ConSave, IntSave, WisSave, ChaSave; // Saving Throws
 	int ProfBonus;

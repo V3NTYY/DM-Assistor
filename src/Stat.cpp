@@ -29,7 +29,7 @@ Stat::Stat()
 	SpellList = SpellBook();
 
 	initConditions();
-	updateModifiables();
+	updateModifiables(true);
 }
 
 void Stat::initConditions()
@@ -54,8 +54,14 @@ void Stat::initConditions()
 	Conditions[Unconscious] = Condition("Unconscious", "An unconscious creature is incapacitated, can't move or speak, and is unaware of its surroundings.", false);
 }
 
-void Stat::updateModifiables()
+void Stat::updateModifiables(bool updateFeats)
 {
+	// Update feats using reference pointer to stat
+	if (updateFeats) {
+		for (Feature& feat : Features)
+			feat.update(this);
+	}
+
 	// Base Modifiers
 	StrMod = (StrScore - 10) / 2;
 	DexMod = (DexScore - 10) / 2;
@@ -168,7 +174,7 @@ void Stat::updateScore(int score, int newValue)
 		break;
 	}
 
-	updateModifiables();
+	updateModifiables(false);
 }
 
 void Stat::updateSaveProf(int save, bool newValue)
@@ -194,7 +200,7 @@ void Stat::updateSaveProf(int save, bool newValue)
 		ChaSaveProf = newValue;
 	}
 
-	updateModifiables();
+	updateModifiables(false);
 }
 
 void Stat::updateSkillProf(int skill, int newValue)
@@ -203,7 +209,7 @@ void Stat::updateSkillProf(int skill, int newValue)
 		return;
 
 	Skills[skill].proficiency = newValue;
-	updateModifiables();
+	updateModifiables(false);
 }
 
 void Stat::updateHealth(int newValue)
@@ -249,6 +255,33 @@ bool Stat::toggleCondition(int newValue)
 		Conditions[newValue].setActive(false);
 	else
 		Conditions[newValue].setActive(true);
+	return true;
+}
+
+bool Stat::addFeat(Feature f)
+{
+	f.update(this);
+	f.identifier = Features.size();
+	Features.push_back(f);
+	return true;
+}
+
+bool Stat::removeFeat(Feature f)
+{
+	Feature* temp = nullptr;
+	/// Grab a pointer reference to the feature to be removed
+	for (Feature& feat : Features)
+		if (feat.identifier == f.identifier)
+			temp = &feat;
+
+	// Feature not found
+	if (temp == nullptr)
+		return false;
+
+	// Remove the feature from the list
+	temp->remove(this);
+	Features.erase(std::remove(Features.begin(), Features.end(), *temp), Features.end());
+
 	return true;
 }
 
@@ -314,5 +347,10 @@ std::vector<Condition> Stat::getActiveConditions()
 		if (condition.isActive())
 			activeConditions.push_back(condition);
 	return activeConditions;
+}
+
+std::vector<Feature> Stat::getFeatures()
+{
+	return Features;
 }
 

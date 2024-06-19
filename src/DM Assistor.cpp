@@ -149,6 +149,9 @@ void MyFrame::createDebugTab()
     		"\ndice -karmic (this toggles karmic dice, no other params needed)"
             "\ncondition -toggle [index of condition, goes 1-14]"
             "\ncondition -list"
+            "\nfeat -add [name]"
+            "\nfeat -remove [name]"
+			"\nfeat -list"
     		"", true);
                 
     	if (words[0] == "stat") {
@@ -285,6 +288,56 @@ void MyFrame::createDebugTab()
 					LogMessage(debugTextCtrl, "No conditions active.", true);
 				else
 					LogMessage(debugTextCtrl, "Active conditions:\n" + result, true);
+			}
+        }
+
+        int samArray[6][1] = {
+                    {-1},
+                    {4},
+                    {-1},
+                    {-1},
+                    {-1},
+                    {-1}
+        };
+        int initArray[6][1] = {
+                {-1},
+                {-1},
+                {-1},
+                {-1},
+                {-1},
+                {-1}
+        };
+        int initSArray[18][1] = {
+          {-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1}
+        };
+        Feature newFeat = Feature();
+        newFeat.init(words[2], "Sample feat. +2 Dex", NORMAL, samArray, initArray, initSArray, -1, -1, -1);
+
+        if (words[0] == "feat")
+        {
+			if (words[1] == "-add")
+			{
+				if (testStat.addFeat(newFeat))
+					LogMessage(debugTextCtrl, "Feat " + words[2] + " added.", true);
+				else
+					LogMessage(debugTextCtrl, "Failure to add feat.", true);
+			}
+			if (words[1] == "-remove")
+			{
+				if (testStat.removeFeat(newFeat))
+					LogMessage(debugTextCtrl, "Feat " + words[2] + " removed.", true);
+				else
+					LogMessage(debugTextCtrl, "Failure to remove feat.", true);
+			}
+			if (words[1] == "-list")
+			{
+				std::string result = "";
+				for (Feature f : testStat.getFeatures())
+					result += f.printFeat() + "\n";
+				if (result == "")
+					LogMessage(debugTextCtrl, "No feats active.", true);
+				else
+					LogMessage(debugTextCtrl, "Active feats:\n" + result, true);
 			}
         }
     });

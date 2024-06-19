@@ -67,4 +67,10 @@ enum Profiency {
 	Expertise
 };
 
+enum FeatureType {
+    CLASS = 0,
+    RACIAL,
+    NORMAL
+};
+
 #endif
