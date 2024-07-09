@@ -146,6 +146,7 @@
     <ClInclude Include="src\headers\Enum.h" />
     <ClInclude Include="src\headers\Feature.h" />
     <ClInclude Include="src\headers\framework.h" />
+    <ClInclude Include="src\headers\json.hpp" />
     <ClInclude Include="src\headers\Resource.h" />
     <ClInclude Include="src\headers\Skill.h" />
     <ClInclude Include="src\headers\Spell.h" />

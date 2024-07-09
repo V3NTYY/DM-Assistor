@@ -260,6 +260,15 @@ bool Stat::toggleCondition(int newValue)
 
 bool Stat::addFeat(Feature f)
 {
+	// Ensure we have an actual feat
+	if (f.name == "Null" && f.desc == "Null")
+		return false;
+
+	// Ensure we aren't adding a duplicate feat
+	for (Feature& feat : Features)
+		if (feat == f)
+			return false;
+
 	f.update(this);
 	f.identifier = Features.size();
 	Features.push_back(f);

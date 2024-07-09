@@ -149,8 +149,9 @@ void MyFrame::createDebugTab()
     		"\ndice -karmic (this toggles karmic dice, no other params needed)"
             "\ncondition -toggle [index of condition, goes 1-14]"
             "\ncondition -list"
-            "\nfeat -add [name]"
+            "\nfeat -add [name/filename]"
             "\nfeat -remove [name]"
+			"\nfeat -save [name]"
 			"\nfeat -list"
     		"", true);
                 
@@ -317,10 +318,10 @@ void MyFrame::createDebugTab()
         {
 			if (words[1] == "-add")
 			{
-				if (testStat.addFeat(newFeat))
+                if (testStat.addFeat(Feature::loadFeat(words[2] + ".json")))
 					LogMessage(debugTextCtrl, "Feat " + words[2] + " added.", true);
 				else
-					LogMessage(debugTextCtrl, "Failure to add feat.", true);
+					LogMessage(debugTextCtrl, "Failure to add feat. Does the file exist?", true);
 			}
 			if (words[1] == "-remove")
 			{
@@ -339,8 +340,26 @@ void MyFrame::createDebugTab()
 				else
 					LogMessage(debugTextCtrl, "Active feats:\n" + result, true);
 			}
+            if (words[1] == "-save") {
+                std::vector<Feature> featList = testStat.getFeatures();
+                Feature* temp = nullptr;
+
+                /// Grab a pointer reference to the feature to save
+                for (Feature& feat : featList)
+                    if (feat.name == words[2])
+                        temp = &feat;
+
+				// Feature not found
+				if (temp == nullptr)
+					LogMessage(debugTextCtrl, "Feature '" + words[2] + "' not found.", true);
+                else {
+                    Feature::saveFeat(*temp, temp->name + ".json");
+                    LogMessage(debugTextCtrl, "Feature '" + words[2] + "' successfully saved.", true);
+                }
+            }
         }
     });
 
 
-};
+}
+;

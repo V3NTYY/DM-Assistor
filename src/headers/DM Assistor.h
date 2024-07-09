@@ -25,6 +25,8 @@ public:
     MyFrame(const wxString& title);
     void createCharTab();
     void createDebugTab();
+    Feature loadFeatFromJSON(std::string file);
+    void saveFeatToJSON(Feature f, std::string file);
 
 private:
     wxNotebook* RIBBON;

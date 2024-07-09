@@ -1,5 +1,6 @@
 #include "headers/Feature.h"
 #include "headers/Stat.h"
+#include <wx/msgdlg.h>
 
 Feature::Feature()
 {
@@ -23,6 +24,91 @@ Feature::Feature()
 	ACMod = -1;
 	SpeedMod = -1;
 
+}
+
+void Feature::saveFeat(Feature f, std::string file)
+{
+	std::ofstream o(file);
+	json j = {
+		{"name", f.name},
+		{"desc", f.desc},
+		{"type", f.FeatType},
+		{"abilityScoreMod", f.AbilityScoreMod},
+		{"saveProfMod", f.SaveProfMod},
+		{"skillProfMod", f.SkillProfMod},
+		{"maxHPMod", f.MaxHPMod},
+		{"ACMod", f.ACMod},
+		{"SpeedMod", f.SpeedMod}
+	};
+
+	if (!o) {
+		wxMessageBox("Failed to open/create JSON.", "Error", wxICON_ERROR | wxOK);
+		return;
+	}
+
+	o << j.dump();
+
+	if (!o)
+		wxMessageBox("Failed to write feature to JSON.", "Error", wxICON_ERROR | wxOK);
+}
+
+Feature Feature::loadFeat(std::string file)
+{
+	Feature newFeat = Feature();
+
+	std::ifstream f(file);
+	// If we can't find the file, just return an ungenerated feat. addFeat() will handle the error.
+	if (!f)
+		return Feature();
+
+	json data = json::parse(f);
+
+	// Load data from JSON. If a field isn't found, it is set to Null or ignored (-1).
+	std::string name = data.value("name", "Null");
+	std::string desc = data.value("desc", "Null");
+	int type = data.value("type", -1);
+	int MaxHPMod = data.value("maxHPMod", -1);
+	int ACMod = data.value("ACMod", -1);
+	int SpeedMod = data.value("SpeedMod", -1);
+
+	int AbilityScoreMod[6][1] = { {-1} };
+	int SaveProfMod[6][1] = { {-1} };
+	int SkillProfMod[18][1] = { {-1} };
+
+	/// Handle the arrays from JSON
+	auto it = data.find("abilityScoreMod");
+	if (it != data.end() && it->is_array()) {
+		int i = 0;
+		for (auto& item : *it) {
+			if (i < 6)
+				AbilityScoreMod[i][0] = item[0].get<int>();
+			i++;
+		}
+	}
+
+	it = data.find("saveProfMod");
+	if (it != data.end() && it->is_array()) {
+		int i = 0;
+		for (auto& item : *it) {
+			if (i < 6)
+				SaveProfMod[i][0] = item[0].get<int>();
+			i++;
+		}
+	}
+
+	it = data.find("skillProfMod");
+	if (it != data.end() && it->is_array()) {
+		int i = 0;
+		for (auto& item : *it) {
+			if (i < 18)
+				SkillProfMod[i][0] = item[0].get<int>();
+			i++;
+		}
+	}
+
+	newFeat.init(name, desc, type, AbilityScoreMod, SaveProfMod, SkillProfMod, MaxHPMod, ACMod, SpeedMod);
+
+	return newFeat;
 }
 
 /// <summary>
