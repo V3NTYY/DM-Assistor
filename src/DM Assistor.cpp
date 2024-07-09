@@ -17,17 +17,34 @@ std::map<std::string, int> abilityMap = {
     {"charisma", Charisma}
 };
 
+std::map<std::string, int> conditionMap = {
+    {"blinded", Blinded},
+    {"charmed", Charmed},
+    {"deafened", Deafened},
+    {"frightened", Frightened},
+    {"grappled", Grappled},
+    {"incapacitated", Incapacitated},
+    {"invisible", Invisible},
+    {"paralyzed", Paralyzed},
+    {"petrified", Petrified},
+    {"poisoned", Poisoned},
+    {"prone", Prone},               
+    {"restrained", Restrained},              
+    {"stunned", Stunned},      
+    {"unconscious", Unconscious}
+};
+
 std::map<std::string, int> skillMap = {
     {"athletics", Athletics},
     {"acrobatics", Acrobatics},
-    {"sleightofhand", SleightOfHand},
+    {"sleight of hand", SleightOfHand},
     {"stealth", Stealth},
     {"arcana", Arcana},
     {"history", History},
     {"investigation", Investigation},
     {"nature", Nature},
     {"religion", Religion},
-    {"animalhandling", AnimalHandling},
+    {"animal handling", AnimalHandling},
     {"insight", Insight},
     {"medicine", Medicine},
     {"perception", Perception},
@@ -120,94 +137,127 @@ void MyFrame::createDebugTab()
 
     // Key listener for debugging
     Bind(wxEVT_TEXT_ENTER, [this, debugTextCtrl](wxCommandEvent& event) {
-    	/// Parse command
-    	std::string command = debugTextCtrl->GetValue().ToStdString();
-    	std::istringstream iss(command);
+        /// Parse command
+        std::string command = debugTextCtrl->GetValue().ToStdString();
+        std::istringstream iss(command);
 
-    	std::string words[5];
-    	for (int i = 0; i < 5; i++)
-    		words[i] = "0";
+        int c = 0;
+        const int argSize = 5;
+        std::string args[argSize];
+        std::string arg;
+        bool inQuotes = false;
 
-    	int i = 0;
-    	for (std::string s; iss >> s && i < 5; ++i)
-    		words[i] = s;
+        /// Initialize the array
+		for (int i = 0; i < argSize; i++)
+			args[i] = "0";
+
+        for (char ch : command) {
+            if (ch == '\"') { // Toggle the inQuotes state
+                inQuotes = !inQuotes;
+                if (!inQuotes) { // End of quoted argument
+                    args[c] = arg;
+                    arg.clear();
+                    c++;
+                    if (c >= argSize) {
+                        LogMessage(debugTextCtrl, "Too many arguments.", true);
+                        return;
+                    }
+                }
+            }
+            else if (std::isspace(ch) && !inQuotes) { // Space outside quotes
+                if (!arg.empty()) {
+                    args[c] = arg;
+                    arg.clear();
+                    c++;
+					if (c >= argSize) {
+						LogMessage(debugTextCtrl, "Too many arguments.", true);
+						return;
+					}
+                }
+            }
+            else
+                arg += ch; // Add character to current argument
+        }
+
+        if (!arg.empty()) // Add last argument if present
+            args[c] = arg;
 
     	///// COMMAND HANDLING
-    	if (words[0] == "commands")
+    	if (args[0] == "commands")
     		LogMessage(debugTextCtrl, "Commands:"
     		"\nstat -change [ability] [value]"
     		"\nstat -list [skills/saves]"
-    		"\nstat -change -proficiency [ability/skill] [0 = none, 1 = prof, 2 = exp]"
+    		"\nstat -change -proficiency \"[ability/skill]\" [0 = none, 1 = prof, 2 = exp]"
     		"\nspell -list"
             "\nspell -consume [slot]"
             "\nspell -replenish [slot]"
             "\nspell -max [slot] [new max slots]"
-            "\nspell -add [name] [description_with_no_spaces] [level]"
-            "\nspell -remove [name] [level]"
-    		"\ndice -roll d[4/8/12/20] [skill]"
+            "\nspell -add \"[name]\" \"[description]\" [level]"
+            "\nspell -remove \"[name]\" [level]"
+    		"\ndice -roll d[4/8/12/20] \"[skill]\""
     		"\ndice -advantage [0 = none, 1 = advantage, 2 = disadvantage]"
     		"\ndice -karmic (this toggles karmic dice, no other params needed)"
-            "\ncondition -toggle [index of condition, goes 1-14]"
+            "\ncondition -toggle \"[name]\""
             "\ncondition -list"
-            "\nfeat -add [name/filename]"
-            "\nfeat -remove [name]"
-			"\nfeat -save [name]"
+            "\nfeat -add \"[filename]\""
+            "\nfeat -remove \"[name]\""
+            "\nfeat -save \"[name]"
 			"\nfeat -list"
     		"", true);
                 
-    	if (words[0] == "stat") {
-    		if (words[1] == "-change") { /// Modify a stat
-    			bool saveProf = std::stoi(words[4]) != 0;
-    			if (words[2] == "-proficiency") {
-    				if (skillMap.count(words[3]) > 0)
-    					testStat.updateSkillProf(skillMap[words[3]], std::stoi(words[4]));
-    				if (abilityMap.count(words[3]) > 0)
-    					testStat.updateSaveProf(abilityMap[words[3]], saveProf);
+    	if (args[0] == "stat") {
+    		if (args[1] == "-change") { /// Modify a stat
+    			bool saveProf = std::stoi(args[4]) != 0;
+    			if (args[2] == "-proficiency") {
+    				if (skillMap.count(args[3]) > 0)
+    					testStat.updateSkillProf(skillMap[args[3]], std::stoi(args[4]));
+    				if (abilityMap.count(args[3]) > 0)
+    					testStat.updateSaveProf(abilityMap[args[3]], saveProf);
     			}
 
-    			if (abilityMap.count(words[2]) > 0)
-    				testStat.updateScore(abilityMap[words[2]], std::stoi(words[3]));
+    			if (abilityMap.count(args[2]) > 0)
+    				testStat.updateScore(abilityMap[args[2]], std::stoi(args[3]));
 
     			LogMessage(debugTextCtrl, "Update made.", true);
     		}
-    		if (words[1] == "-list") { /// Return skills
-    			if (words[2] == "skills")
+    		if (args[1] == "-list") { /// Return skills
+    			if (args[2] == "skills")
     				LogMessage(debugTextCtrl, testStat.returnSkills(), true);
-    			if (words[2] == "saves") {
+    			if (args[2] == "saves") {
     				LogMessage(debugTextCtrl, testStat.returnSaves(), true);
     			}
     		}
     	}
 
-    	if (words[0] == "dice")
+    	if (args[0] == "dice")
     	{
-    		if (words[1] == "-roll")
+    		if (args[1] == "-roll")
     		{
     			/// Cut the "d" out of the d20 param
-    			std::string param3 = words[2];
+    			std::string param3 = args[2];
     			param3.erase(std::remove_if(param3.begin(), param3.end(), [](char c) { return !std::isdigit(c); }), param3.end());
     			int diceSides = std::stoi(param3);
 
-    			if (words[3] == "0") {
+    			if (args[3] == "0") {
     				std::string result = std::to_string(testRoller.roll(diceSides, 0, advantage, disadvantage));
-    				LogMessage(debugTextCtrl, "Rolled a " + words[2] + ": " + result, true);
+    				LogMessage(debugTextCtrl, "Rolled a " + args[2] + ": " + result, true);
     			}
     			else {
-    				Skill skill = testStat.getSkill(skillMap[words[3]]);
+    				Skill skill = testStat.getSkill(skillMap[args[3]]);
     				std::string result = std::to_string(testRoller.roll(diceSides, skill.value, advantage, disadvantage));
     				LogMessage(debugTextCtrl, "Rolled for " + skill.getSkillName() + ": " + result, true);
     			}
     		}
-    		if (words[1] == "-advantage")
+    		if (args[1] == "-advantage")
     		{
     			advantage = false;
     			disadvantage = false;
 
-    			if (std::stoi(words[2]) == 1) {
+    			if (std::stoi(args[2]) == 1) {
     				advantage = true;
     				disadvantage = false;
     			}
-    			if (std::stoi(words[2]) == 2) {
+    			if (std::stoi(args[2]) == 2) {
     				advantage = false;
     				disadvantage = true;
     			}
@@ -221,66 +271,66 @@ void MyFrame::createDebugTab()
     				result = "normally";
     			LogMessage(debugTextCtrl, "Dice now roll " + result, true);
     		}
-    		if (words[1] == "-karmic") {
+    		if (args[1] == "-karmic") {
     			testRoller.toggleKarmicDice();
     			LogMessage(debugTextCtrl, "Toggle invert for Karmic", true);
     		}
     	}
 
-        if (words[0] == "spell")
+        if (args[0] == "spell")
         {
-            if (words[1] == "-list")
+            if (args[1] == "-list")
                 LogMessage(debugTextCtrl, testStat.getSpellBook().printBook(), true);
 
-            if (words[1] == "-consume")
+            if (args[1] == "-consume")
             {
-                if (testStat.getSpellBook().expendSlot(std::stoi(words[2])))
-					LogMessage(debugTextCtrl, "Slot " + words[2] + " expended.", true);
+                if (testStat.getSpellBook().expendSlot(std::stoi(args[2])))
+					LogMessage(debugTextCtrl, "Slot " + args[2] + " expended.", true);
                 else
                     LogMessage(debugTextCtrl, "Failure to expend slot.", true);
             }
-            if (words[1] == "-replenish")
+            if (args[1] == "-replenish")
             {
-                if (testStat.getSpellBook().replenishSlot(std::stoi(words[2])))
-					LogMessage(debugTextCtrl, "Slot " + words[2] + " replenished.", true);
+                if (testStat.getSpellBook().replenishSlot(std::stoi(args[2])))
+					LogMessage(debugTextCtrl, "Slot " + args[2] + " replenished.", true);
 				else
 					LogMessage(debugTextCtrl, "Failure to replenish slot.", true);
             }
-            if (words[1] == "-max")
+            if (args[1] == "-max")
             {
-				if (testStat.getSpellBook().modifySlotMax(std::stoi(words[2]), std::stoi(words[3])))
-					LogMessage(debugTextCtrl, "Slot " + words[2] + " max set to " + words[3], true);
+				if (testStat.getSpellBook().modifySlotMax(std::stoi(args[2]), std::stoi(args[3])))
+					LogMessage(debugTextCtrl, "Slot " + args[2] + " max set to " + args[3], true);
                 else
 					LogMessage(debugTextCtrl, "Failure to modify slot max.", true);
             }
-        	if (words[1] == "-add")
+        	if (args[1] == "-add")
         	{
-        		Spell newSpell = Spell(words[2], words[3], std::stoi(words[4]));
+        		Spell newSpell = Spell(args[2], args[3], std::stoi(args[4]));
         		if (testStat.getSpellBook().addSpell(newSpell))
-                    LogMessage(debugTextCtrl, "Spell " + words[2] + " added.", true);
+                    LogMessage(debugTextCtrl, "Spell " + args[2] + " added.", true);
         		else
         			LogMessage(debugTextCtrl, "Failure to add spell.", true);
         	}
-			if (words[1] == "-remove")
+			if (args[1] == "-remove")
 			{
-                Spell newSpell = Spell(words[2], "debug", std::stoi(words[3]));
+                Spell newSpell = Spell(args[2], "debug", std::stoi(args[3]));
 				if (testStat.getSpellBook().removeSpell(newSpell))
-                    LogMessage(debugTextCtrl, "Spell " + words[2] + " removed.", true);
+                    LogMessage(debugTextCtrl, "Spell " + args[2] + " removed.", true);
 				else 
                     LogMessage(debugTextCtrl, "Failure to remove spell.", true);
 			}
         }
 
-        if (words[0] == "condition") 
+        if (args[0] == "condition") 
         {
-			if (words[1] == "-toggle")
+			if (args[1] == "-toggle")
 			{
-				if (testStat.toggleCondition(std::stoi(words[2])))
+				if (testStat.toggleCondition(conditionMap[args[2]]))
 					LogMessage(debugTextCtrl, "Condition toggled.", true);
 				else
 					LogMessage(debugTextCtrl, "Failure to toggle condition.", true);
 			}
-			if (words[1] == "-list")
+			if (args[1] == "-list")
 			{
 				std::string result = "";
 				for (Condition c : testStat.getActiveConditions())
@@ -300,37 +350,30 @@ void MyFrame::createDebugTab()
                     {-1},
                     {-1}
         };
-        int initArray[6][1] = {
-                {-1},
-                {-1},
-                {-1},
-                {-1},
-                {-1},
-                {-1}
-        };
         int initSArray[18][1] = {
           {-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1}
         };
-        Feature newFeat = Feature();
-        newFeat.init(words[2], "Sample feat. +2 Dex", NORMAL, samArray, initArray, initSArray, -1, -1, -1);
+      
 
-        if (words[0] == "feat")
+        if (args[0] == "feat")
         {
-			if (words[1] == "-add")
+			if (args[1] == "-add")
 			{
-                if (testStat.addFeat(Feature::loadFeat(words[2] + ".json")))
-					LogMessage(debugTextCtrl, "Feat " + words[2] + " added.", true);
+                if (testStat.addFeat(Feature::loadFeat(args[2] + ".json")))
+					LogMessage(debugTextCtrl, "Feat " + args[2] + " added.", true);
 				else
 					LogMessage(debugTextCtrl, "Failure to add feat. Does the file exist?", true);
 			}
-			if (words[1] == "-remove")
+			if (args[1] == "-remove")
 			{
+				Feature newFeat = Feature();
+				newFeat.init(args[2], "Null", -1, samArray, samArray, initSArray, -1, -1, -1);
 				if (testStat.removeFeat(newFeat))
-					LogMessage(debugTextCtrl, "Feat " + words[2] + " removed.", true);
+					LogMessage(debugTextCtrl, "Feat " + args[2] + " removed.", true);
 				else
 					LogMessage(debugTextCtrl, "Failure to remove feat.", true);
 			}
-			if (words[1] == "-list")
+			if (args[1] == "-list")
 			{
 				std::string result = "";
 				for (Feature f : testStat.getFeatures())
@@ -340,21 +383,21 @@ void MyFrame::createDebugTab()
 				else
 					LogMessage(debugTextCtrl, "Active feats:\n" + result, true);
 			}
-            if (words[1] == "-save") {
+            if (args[1] == "-save") {
                 std::vector<Feature> featList = testStat.getFeatures();
                 Feature* temp = nullptr;
 
                 /// Grab a pointer reference to the feature to save
                 for (Feature& feat : featList)
-                    if (feat.name == words[2])
+                    if (feat.name == args[2])
                         temp = &feat;
 
 				// Feature not found
 				if (temp == nullptr)
-					LogMessage(debugTextCtrl, "Feature '" + words[2] + "' not found.", true);
+					LogMessage(debugTextCtrl, "Feature '" + args[2] + "' not found.", true);
                 else {
                     Feature::saveFeat(*temp, temp->name + ".json");
-                    LogMessage(debugTextCtrl, "Feature '" + words[2] + "' successfully saved.", true);
+                    LogMessage(debugTextCtrl, "Feature '" + args[2] + "' successfully saved.", true);
                 }
             }
         }

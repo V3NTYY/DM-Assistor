@@ -21,17 +21,11 @@ public:
     // Override == operator for comparison
     bool operator==(const Feature& other) const {
         bool returnVal = true;
-		if (identifier != other.identifier)
-			returnVal = false;
 		if (name != other.name)
-			returnVal = false;
-		if (desc != other.desc)
 			returnVal = false;
 
         return returnVal;
     }
-
-    int identifier;
 
     /// Only public because I'm too lazy to make getters. DONT TOUCH CHAIN
     std::string name;

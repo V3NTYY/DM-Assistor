@@ -270,7 +270,6 @@ bool Stat::addFeat(Feature f)
 			return false;
 
 	f.update(this);
-	f.identifier = Features.size();
 	Features.push_back(f);
 	return true;
 }
@@ -280,7 +279,7 @@ bool Stat::removeFeat(Feature f)
 	Feature* temp = nullptr;
 	/// Grab a pointer reference to the feature to be removed
 	for (Feature& feat : Features)
-		if (feat.identifier == f.identifier)
+		if (feat == f)
 			temp = &feat;
 
 	// Feature not found

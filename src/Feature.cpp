@@ -9,7 +9,6 @@ Feature::Feature()
 	FeatType = NORMAL;
 	chain = nullptr;
 	applied = false;
-	identifier = 0;
 
 	for (int i = 0; i < 6; i++)
 		AbilityScoreMod[i][0] = -1;
