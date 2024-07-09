@@ -185,9 +185,9 @@ void MyFrame::createDebugTab()
     	///// COMMAND HANDLING
     	if (args[0] == "commands")
     		LogMessage(debugTextCtrl, "Commands:"
-    		"\nstat -change [ability] [value]"
     		"\nstat -list [skills/saves]"
-    		"\nstat -change -proficiency \"[ability/skill]\" [0 = none, 1 = prof, 2 = exp]"
+    		"\nstat -change [ability] [value]"
+    		"\nstat -change -proficiency \"[skill/save]\" [0 = none, 1 = prof, 2 = exp]"
     		"\nspell -list"
             "\nspell -consume [slot]"
             "\nspell -replenish [slot]"
