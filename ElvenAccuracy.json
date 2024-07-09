@@ -1,0 +1,11 @@
+{
+	"ACMod":-1,
+	"SpeedMod":-1,
+	"abilityScoreMod":[[-1],[1],[-1],[-1],[-1],[-1]],
+	"desc":"Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once.",
+	"maxHPMod":-1,
+	"name":"Elven Accuracy",
+	"saveProfMod":[[-1],[-1],[-1],[-1],[-1],[-1]],
+	"skillProfMod":[[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1]],
+	"type":2
+}
