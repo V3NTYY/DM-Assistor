@@ -265,9 +265,27 @@ bool Stat::addFeat(Feature f)
 		return false;
 
 	// Ensure we aren't adding a duplicate feat
-	for (Feature& feat : Features)
+	for (Feature& feat : Features) {
 		if (feat == f)
 			return false;
+
+		Feature* chainTemp = &feat;
+		Feature* fChainTemp = &f;
+
+		// Make sure we aren't adding a feat that is chained already
+		while (chainTemp != nullptr) {
+			if (*chainTemp == f)
+				return false;
+			chainTemp = chainTemp->getChain();
+		}
+
+		// Make sure we aren't adding a feat that CONTAINS a chain that exists already
+		while (fChainTemp != nullptr) {
+			if (*fChainTemp == feat)
+				return false;
+			fChainTemp = fChainTemp->getChain();
+		}
+	}
 
 	f.update(this);
 	Features.push_back(f);

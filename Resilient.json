@@ -2,6 +2,7 @@
 	"ACMod":-1,
 	"SpeedMod":-1,
 	"abilityScoreMod":[[-1],[1],[-1],[-1],[-1],[-1]],
+	"chain":"Null",
 	"desc":"Increase the chosen ability score by 1, to a maximum of 20. You gain proficiency in saving throws using the chosen ability.",
 	"maxHPMod":-1,
 	"name":"Resilient",

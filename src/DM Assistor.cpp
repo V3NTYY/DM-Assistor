@@ -184,7 +184,7 @@ void MyFrame::createDebugTab()
 
     	///// COMMAND HANDLING
     	if (args[0] == "commands")
-    		LogMessage(debugTextCtrl, "Commands:"
+    		LogMessage(debugTextCtrl, "COMMANDS:"
     		"\nstat -list [skills/saves]"
     		"\nstat -change [ability] [value]"
     		"\nstat -change -proficiency \"[skill/save]\" [0 = none, 1 = prof, 2 = exp]"
@@ -376,8 +376,11 @@ void MyFrame::createDebugTab()
 			if (args[1] == "-list")
 			{
 				std::string result = "";
-				for (Feature f : testStat.getFeatures())
-					result += f.printFeat() + "\n";
+                for (Feature f : testStat.getFeatures()) {
+                    result += f.printFeat() + "\n";
+					if (f.getChain() != nullptr)
+						result += "[Chain]" + f.printChain() + "\n";
+                }
 				if (result == "")
 					LogMessage(debugTextCtrl, "No feats active.", true);
 				else

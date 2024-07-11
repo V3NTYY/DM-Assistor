@@ -14,9 +14,11 @@ public:
 
     void init(std::string name, std::string desc, int type, int Abilityscoremod[6][1], int saveMod[6][1], int skillMod[18][1], int Maxhpmod, int ACmod, int Speedmod);
 	void setChain(Feature* f);
+    Feature* getChain();
     void remove(void* STAT);
     void update(void* STAT);
     std::string printFeat();
+    std::string printChain();
 
     // Override == operator for comparison
     bool operator==(const Feature& other) const {
@@ -39,9 +41,7 @@ public:
     int MaxHPMod, ACMod, SpeedMod;
     bool applied;
 
-    Feature* chain;
-
 private:
-
+    Feature* chain;
 };
 #endif

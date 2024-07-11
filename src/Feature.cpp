@@ -27,6 +27,10 @@ Feature::Feature()
 
 void Feature::saveFeat(Feature f, std::string file)
 {
+	std::string chainName = "Null";
+	if(f.chain != nullptr)
+		chainName = f.chain->name;
+
 	std::ofstream o(file);
 	json j = {
 		{"name", f.name},
@@ -37,7 +41,8 @@ void Feature::saveFeat(Feature f, std::string file)
 		{"skillProfMod", f.SkillProfMod},
 		{"maxHPMod", f.MaxHPMod},
 		{"ACMod", f.ACMod},
-		{"SpeedMod", f.SpeedMod}
+		{"speedMod", f.SpeedMod},
+		{"chain", chainName}
 	};
 
 	if (!o) {
@@ -55,10 +60,30 @@ Feature Feature::loadFeat(std::string file)
 {
 	Feature newFeat = Feature();
 
+	// Check if we are chaining a feature, splice and fix our string
+	std::string chainList = "";
+	size_t pos = file.find("|");
+	std::vector<std::string> chainNames;
+	if (pos != std::string::npos) {
+		chainList = file.substr(pos + 1);
+		file = file.substr(0, pos);
+	}
+
+	// Split the chain list into a vector
+	std::vector<std::string> chainResult;
+	std::string::size_type start = 0;
+	std::string::size_type end = chainList.find('|');
+	while (end != std::string::npos) {
+		chainResult.push_back(chainList.substr(start, end - start));
+		start = end + 1;
+		end = chainList.find('|', start);
+	}
+	chainResult.push_back(chainList.substr(start));
+
 	std::ifstream f(file);
 	// If we can't find the file, just return an ungenerated feat. addFeat() will handle the error.
 	if (!f)
-		return Feature();
+		return newFeat;
 
 	json data = json::parse(f);
 
@@ -68,7 +93,7 @@ Feature Feature::loadFeat(std::string file)
 	int type = data.value("type", -1);
 	int MaxHPMod = data.value("maxHPMod", -1);
 	int ACMod = data.value("ACMod", -1);
-	int SpeedMod = data.value("SpeedMod", -1);
+	int SpeedMod = data.value("speedMod", -1);
 
 	int AbilityScoreMod[6][1] = { {-1} };
 	int SaveProfMod[6][1] = { {-1} };
@@ -105,7 +130,22 @@ Feature Feature::loadFeat(std::string file)
 		}
 	}
 
+	std::string appendChainList = name + "|";
+	// Check and ensure we aren't duplicating any chains/feats
+	for (std::string currName : chainResult) {
+		if (currName == name)
+			return newFeat;
+		appendChainList += currName + "|";
+	}
+
+	// Attach the chain if it exists
+	Feature* chainFeat = nullptr;
+	std::string chainName = data.value("chain", "Null");
+	if (chainName != "Null" && chainName != name)
+		chainFeat = new Feature(Feature::loadFeat(chainName + ".json|" + appendChainList));
+	
 	newFeat.init(name, desc, type, AbilityScoreMod, SaveProfMod, SkillProfMod, MaxHPMod, ACMod, SpeedMod);
+	newFeat.setChain(chainFeat);
 
 	return newFeat;
 }
@@ -153,6 +193,11 @@ void Feature::init(std::string Name, std::string Desc, int newValue, int Ability
 void Feature::setChain(Feature *f)
 {
 	chain = f;
+}
+
+Feature* Feature::getChain()
+{
+	return chain;
 }
 
 /// <summary>
@@ -249,4 +294,18 @@ void Feature::update(void* STAT)
 std::string Feature::printFeat()
 {
 	return name + ": " + desc;
+}
+
+std::string Feature::printChain()
+{
+	if (chain == nullptr)
+		return "";
+	else {
+		std::string t1 = chain->name;
+		std::string t2 = chain->desc;
+		if (t1 == "Null" || t2 == "Null")
+			return "Couldn't load feat.";
+		else
+			return chain->name + ": " + chain->desc;
+	}
 }
