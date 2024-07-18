@@ -118,6 +118,7 @@ void Stat::updateModifiables(bool updateFeats)
 	// Passive skills
 	passivePerception = 10 + Skills[Perception].value;
 	passiveInvestigation = 10 + Skills[Investigation].value;
+	initiativeMod = DexMod;
 }
 
 std::string Stat::returnSkills()
@@ -246,6 +247,13 @@ void Stat::updateSpeed(int newValue)
 		Speed = 0;
 }
 
+void Stat::updateInitative(int newValue)
+{
+	initiativeMod = newValue;
+	if (initiativeMod < 0)
+		initiativeMod = 0;
+}
+
 bool Stat::toggleCondition(int newValue)
 {
 	if (newValue >= Conditions.size() || newValue < 0)
@@ -265,25 +273,27 @@ bool Stat::addFeat(Feature f)
 		return false;
 
 	// Ensure we aren't adding a duplicate feat
-	for (Feature& feat : Features) {
-		if (feat == f)
-			return false;
-
-		Feature* chainTemp = &feat;
-		Feature* fChainTemp = &f;
-
-		// Make sure we aren't adding a feat that is chained already
-		while (chainTemp != nullptr) {
-			if (*chainTemp == f)
+	if (!f.repeatable) {
+		for (Feature& feat : Features) {
+			if (feat == f)
 				return false;
-			chainTemp = chainTemp->getChain();
-		}
 
-		// Make sure we aren't adding a feat that CONTAINS a chain that exists already
-		while (fChainTemp != nullptr) {
-			if (*fChainTemp == feat)
-				return false;
-			fChainTemp = fChainTemp->getChain();
+			Feature* chainTemp = &feat;
+			Feature* fChainTemp = &f;
+
+			// Make sure we aren't adding a feat that is chained already
+			while (chainTemp != nullptr) {
+				if (*chainTemp == f)
+					return false;
+				chainTemp = chainTemp->getChain();
+			}
+
+			// Make sure we aren't adding a feat that CONTAINS a chain that exists already
+			while (fChainTemp != nullptr) {
+				if (*fChainTemp == feat)
+					return false;
+				fChainTemp = fChainTemp->getChain();
+			}
 		}
 	}
 
@@ -294,21 +304,19 @@ bool Stat::addFeat(Feature f)
 
 bool Stat::removeFeat(Feature f)
 {
-	Feature* temp = nullptr;
-	/// Grab a pointer reference to the feature to be removed
-	for (Feature& feat : Features)
-		if (feat == f)
-			temp = &feat;
+	// Grab a pointer reference to the feature to be removed
+	auto it = std::find_if(Features.begin(), Features.end(), [&f](const Feature& feat) { return feat == f; });
 
 	// Feature not found
-	if (temp == nullptr)
+	if (it == Features.end())
 		return false;
 
 	// Remove the feature from the list
-	temp->remove(this);
-	Features.erase(std::remove(Features.begin(), Features.end(), *temp), Features.end());
+	it->remove(this);
+	Features.erase(it);
 
 	return true;
+
 }
 
 Skill Stat::getSkill(int skill)

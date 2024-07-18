@@ -10,9 +10,9 @@ class Feature {
 public:
     Feature();
     void static saveFeat(Feature f, std::string file);
-	Feature static loadFeat(std::string file);
+	Feature static loadFeat(std::string file, int variant);
 
-    void init(std::string name, std::string desc, int type, int Abilityscoremod[6][1], int saveMod[6][1], int skillMod[18][1], int Maxhpmod, int ACmod, int Speedmod);
+    void init(std::string name, std::string desc, int type, int variant);
 	void setChain(Feature* f);
     Feature* getChain();
     void remove(void* STAT);
@@ -35,10 +35,14 @@ public:
     int FeatType;
 
     // Stat modifiables
-    int AbilityScoreMod[6][1];
-    int SaveProfMod[6][1];
-    int SkillProfMod[18][1];
+    int AbilityScoreMod[7];
+    int SaveProfMod[7];
+    int SkillProfMod[18];
     int MaxHPMod, ACMod, SpeedMod;
+    int initiativeMod;
+    int AcceptableVariants[6];
+    int selectedVariant;
+    bool repeatable;
     bool applied;
 
 private:

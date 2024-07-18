@@ -9,20 +9,25 @@ Feature::Feature()
 	FeatType = NORMAL;
 	chain = nullptr;
 	applied = false;
+	repeatable = false;
 
 	for (int i = 0; i < 6; i++)
-		AbilityScoreMod[i][0] = -1;
+		AcceptableVariants[i] = -1;
 
-	for (int i = 0; i < 6; i++)
-		SaveProfMod[i][0] = -1;
+	for (int i = 0; i < 7; i++)
+		AbilityScoreMod[i] = -1;
+
+	for (int i = 0; i < 7; i++)
+		SaveProfMod[i] = -1;
 
 	for (int i = 0; i < 18; i++)
-		SkillProfMod[i][0] = -1;
+		SkillProfMod[i] = -1;
 
 	MaxHPMod = -1;
 	ACMod = -1;
 	SpeedMod = -1;
-
+	initiativeMod = -1;
+	selectedVariant = -1;
 }
 
 void Feature::saveFeat(Feature f, std::string file)
@@ -30,6 +35,12 @@ void Feature::saveFeat(Feature f, std::string file)
 	std::string chainName = "Null";
 	if(f.chain != nullptr)
 		chainName = f.chain->name;
+
+	/// Temp variables
+	int AcceptableVariants[6] = { -1, -1, -1, -1, -1, -1 };
+	int AbilityScoreMod[7] = { -1, -1, -1, -1, -1, -1, -1 };
+	int SaveProfMod[7] = { -1, -1, -1, -1, -1, -1, -1 };
+	int SkillProfMod[18] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 	std::ofstream o(file);
 	json j = {
@@ -42,8 +53,31 @@ void Feature::saveFeat(Feature f, std::string file)
 		{"maxHPMod", f.MaxHPMod},
 		{"ACMod", f.ACMod},
 		{"speedMod", f.SpeedMod},
+		{"initiativeMod", f.initiativeMod},
+		{"acceptableVariants", f.AcceptableVariants},
+		{"repeatable", f.repeatable},
 		{"chain", chainName}
 	};
+
+	/// Filter out and don't save values that are -1 or Null
+	if (f.MaxHPMod == -1)
+		j.erase("maxHPMod");
+	if (f.ACMod == -1)
+		j.erase("ACMod");
+	if (f.SpeedMod == -1)
+		j.erase("speedMod");
+	if (std::equal(std::begin(AcceptableVariants), std::end(AcceptableVariants), std::begin(f.AcceptableVariants)))
+		j.erase("acceptableVariants");
+	if (std::equal(std::begin(AbilityScoreMod), std::end(AbilityScoreMod), std::begin(f.AbilityScoreMod)))
+		j.erase("abilityScoreMod");
+	if (std::equal(std::begin(SaveProfMod), std::end(SaveProfMod), std::begin(f.SaveProfMod)))
+		j.erase("saveProfMod");
+	if (std::equal(std::begin(SkillProfMod), std::end(SkillProfMod), std::begin(f.SkillProfMod)))
+		j.erase("skillProfMod");
+	if (f.initiativeMod == -1)
+		j.erase("initiativeMod");
+	if (chainName == "Null")
+		j.erase("chain");
 
 	if (!o) {
 		wxMessageBox("Failed to open/create JSON.", "Error", wxICON_ERROR | wxOK);
@@ -56,7 +90,7 @@ void Feature::saveFeat(Feature f, std::string file)
 		wxMessageBox("Failed to write feature to JSON.", "Error", wxICON_ERROR | wxOK);
 }
 
-Feature Feature::loadFeat(std::string file)
+Feature Feature::loadFeat(std::string file, int Variant)
 {
 	Feature newFeat = Feature();
 
@@ -94,18 +128,31 @@ Feature Feature::loadFeat(std::string file)
 	int MaxHPMod = data.value("maxHPMod", -1);
 	int ACMod = data.value("ACMod", -1);
 	int SpeedMod = data.value("speedMod", -1);
+	int InitiativeMod = data.value("initiativeMod", -1);
+	bool Repeatable = data.value("repeatable", false);
 
-	int AbilityScoreMod[6][1] = { {-1} };
-	int SaveProfMod[6][1] = { {-1} };
-	int SkillProfMod[18][1] = { {-1} };
+	int AcceptableVariants[6] = { -1, -1, -1, -1, -1, -1 };
+	int AbilityScoreMod[7] = { -1, -1, -1, -1, -1, -1, -1 };
+	int SaveProfMod[7] = { -1, -1, -1, -1, -1, -1, -1 };
+	int SkillProfMod[18] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 	/// Handle the arrays from JSON
-	auto it = data.find("abilityScoreMod");
+	auto it = data.find("acceptableVariants");
 	if (it != data.end() && it->is_array()) {
 		int i = 0;
 		for (auto& item : *it) {
 			if (i < 6)
-				AbilityScoreMod[i][0] = item[0].get<int>();
+				AcceptableVariants[i] = item.get<int>();
+			i++;
+		}
+	}
+
+	it = data.find("abilityScoreMod");
+	if (it != data.end() && it->is_array()) {
+		int i = 0;
+		for (auto& item : *it) {
+			if (i < 7)
+				AbilityScoreMod[i] = item.get<int>();
 			i++;
 		}
 	}
@@ -114,8 +161,8 @@ Feature Feature::loadFeat(std::string file)
 	if (it != data.end() && it->is_array()) {
 		int i = 0;
 		for (auto& item : *it) {
-			if (i < 6)
-				SaveProfMod[i][0] = item[0].get<int>();
+			if (i < 7)
+				SaveProfMod[i] = item.get<int>();
 			i++;
 		}
 	}
@@ -125,7 +172,7 @@ Feature Feature::loadFeat(std::string file)
 		int i = 0;
 		for (auto& item : *it) {
 			if (i < 18)
-				SkillProfMod[i][0] = item[0].get<int>();
+				SkillProfMod[i] = item.get<int>();
 			i++;
 		}
 	}
@@ -142,9 +189,20 @@ Feature Feature::loadFeat(std::string file)
 	Feature* chainFeat = nullptr;
 	std::string chainName = data.value("chain", "Null");
 	if (chainName != "Null" && chainName != name)
-		chainFeat = new Feature(Feature::loadFeat(chainName + ".json|" + appendChainList));
+		chainFeat = new Feature(Feature::loadFeat(chainName + ".json|" + appendChainList, -1));
 	
-	newFeat.init(name, desc, type, AbilityScoreMod, SaveProfMod, SkillProfMod, MaxHPMod, ACMod, SpeedMod);
+	// Assign modifiers to feat
+	std::copy_n(AcceptableVariants, 6, newFeat.AcceptableVariants);
+	std::copy_n(AbilityScoreMod, 7, newFeat.AbilityScoreMod);
+	std::copy_n(SaveProfMod, 7, newFeat.SaveProfMod);
+	std::copy_n(SkillProfMod, 18, newFeat.SkillProfMod);
+	newFeat.MaxHPMod = MaxHPMod;
+	newFeat.ACMod = ACMod;
+	newFeat.SpeedMod = SpeedMod;
+	newFeat.initiativeMod = InitiativeMod;
+	newFeat.repeatable = Repeatable;
+
+	newFeat.init(name, desc, type, Variant);
 	newFeat.setChain(chainFeat);
 
 	return newFeat;
@@ -163,7 +221,7 @@ Feature Feature::loadFeat(std::string file)
 /// <param name="MaxHPMod -- integer representing MaxHP mod"></param>
 /// <param name="ACMod -- integer representing AC mod"></param>
 /// <param name="SpeedMod -- integer representing Speed mod"></param>
-void Feature::init(std::string Name, std::string Desc, int newValue, int Abilityscoremod[6][1], int saveMod[6][1], int skillMod[18][1], int Maxhpmod, int ACmod, int Speedmod)
+void Feature::init(std::string Name, std::string Desc, int newValue, int Variant)
 {
 	// Value checks
 	if (newValue < 0 || newValue > 2)
@@ -172,19 +230,7 @@ void Feature::init(std::string Name, std::string Desc, int newValue, int Ability
 	name = Name;
 	desc = Desc;
 	FeatType = newValue;
-
-	for (int i = 0; i < 6; i++)
-		AbilityScoreMod[i][0] = Abilityscoremod[i][0];
-
-	MaxHPMod = Maxhpmod;
-	ACMod = ACmod;
-	SpeedMod = Speedmod;
-
-	for (int i = 0; i < 6; i++)
-		SaveProfMod[i][0] = saveMod[i][0];
-
-	for (int i = 0; i < 18; i++)
-		SkillProfMod[i][0] = skillMod[i][0];
+	selectedVariant = Variant;
 }
 
 /// <summary>
@@ -215,8 +261,8 @@ void Feature::remove(void* STAT)
 		// Ability Score Mod
 		for (int i = 0; i < 6; i++)
 		{
-			if (AbilityScoreMod[i][0] != -1)
-				s->updateScore(i, s->getScoreMods()[i] - AbilityScoreMod[i][0]);
+			if (AbilityScoreMod[i] != -1)
+				s->updateScore(i, s->getScoreMods()[i] - AbilityScoreMod[i]);
 		}
 
 		// Max HP Mod	
@@ -230,15 +276,15 @@ void Feature::remove(void* STAT)
 		// Skill Prof Mod
 		for (int i = 0; i < 18; i++)
 		{
-			if (SkillProfMod[i][0] != -1)
-				s->updateSkillProf(i, SkillProfMod[i][0]);
+			if (SkillProfMod[i] != -1)
+				s->updateSkillProf(i, SkillProfMod[i]);
 		}
 
 		// Save Prof Mod
 		for (int i = 0; i < 6; i++)
 		{
-			if (SaveProfMod[i][0] != -1)
-				s->updateSaveProf(i, SaveProfMod[i][0]);
+			if (SaveProfMod[i] != -1)
+				s->updateSaveProf(i, SaveProfMod[i]);
 		}
 
 		// Apply any chained features to our statblock
@@ -256,11 +302,20 @@ void Feature::update(void* STAT)
 	{
 		applied = true;
 
+		// If we have a variant, apply the variant to the score (used for selecting intelligence vs wisdom for example)
+		if ((selectedVariant > -1 && selectedVariant < 7) && AcceptableVariants[selectedVariant] != -1)
+		{
+			if (AbilityScoreMod[6] != -1)
+				AbilityScoreMod[selectedVariant] = AbilityScoreMod[6];
+			if (SaveProfMod[6] != -1)
+				SaveProfMod[selectedVariant] = SaveProfMod[6];
+		}
+
 		// Ability Score Mod
 		for (int i = 0; i < 6; i++)
 		{
-			if (AbilityScoreMod[i][0] != -1)
-				s->updateScore(i, s->getScoreMods()[i] + AbilityScoreMod[i][0]);
+			if (AbilityScoreMod[i] != -1)
+				s->updateScore(i, s->getScoreMods()[i] + AbilityScoreMod[i]);
 		}
 
 		// Max HP Mod
@@ -274,15 +329,15 @@ void Feature::update(void* STAT)
 		// Skill Prof Mod
 		for (int i = 0; i < 18; i++)
 		{
-			if (SkillProfMod[i][0] != -1)
-				s->updateSkillProf(i, SkillProfMod[i][0]);
+			if (SkillProfMod[i] != -1)
+				s->updateSkillProf(i, SkillProfMod[i]);
 		}
 
 		// Save Prof Mod
 		for (int i = 0; i < 6; i++)
 		{
-			if (SaveProfMod[i][0] != -1)
-				s->updateSaveProf(i, SaveProfMod[i][0]);
+			if (SaveProfMod[i] != -1)
+				s->updateSaveProf(i, SaveProfMod[i]);
 		}
 
 		// Apply any chained features to our statblock

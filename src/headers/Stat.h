@@ -21,6 +21,7 @@ public:
 	void updateMaxHealth(int newValue);
 	void updateAC(int newValue);
 	void updateSpeed(int newValue);
+	void updateInitative(int newValue);
 	bool toggleCondition(int newValue);
 
 	/// Feature removal/addition
@@ -62,6 +63,7 @@ private:
 	std::vector<Skill> Skills; // Skills
 	int StrMod, DexMod, ConMod, IntMod, WisMod, ChaMod; // Ability Score Modifiers
 	int StrSave, DexSave, ConSave, IntSave, WisSave, ChaSave; // Saving Throws
+	int initiativeMod; // Base initiative modifier
 	int ProfBonus;
 	int passivePerception, passiveInvestigation; // Passive Skills
 };

@@ -182,6 +182,10 @@ void MyFrame::createDebugTab()
         if (!arg.empty()) // Add last argument if present
             args[c] = arg;
 
+        // Set the entire args to lowercase
+        for (int i = 0; i < argSize; i++)
+            std::transform(args[i].begin(), args[i].end(), args[i].begin(), ::tolower);
+
     	///// COMMAND HANDLING
     	if (args[0] == "commands")
     		LogMessage(debugTextCtrl, "COMMANDS:"
@@ -199,7 +203,7 @@ void MyFrame::createDebugTab()
     		"\ndice -karmic (this toggles karmic dice, no other params needed)"
             "\ncondition -toggle \"[name]\""
             "\ncondition -list"
-            "\nfeat -add \"[filename]\""
+            "\nfeat -add \"[filename]\" [ability] [ability] (NOTE: only enter a second parameter if you are adding the feat twice, such as an ASI or another repeatable feat)"
             "\nfeat -remove \"[name]\""
             "\nfeat -save \"[name]"
 			"\nfeat -list"
@@ -342,32 +346,32 @@ void MyFrame::createDebugTab()
 			}
         }
 
-        int samArray[6][1] = {
-                    {-1},
-                    {4},
-                    {-1},
-                    {-1},
-                    {-1},
-                    {-1}
-        };
-        int initSArray[18][1] = {
-          {-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1},{-1}
-        };
-      
-
         if (args[0] == "feat")
         {
 			if (args[1] == "-add")
 			{
-                if (testStat.addFeat(Feature::loadFeat(args[2] + ".json")))
+                int variant = -1;
+                if (args[3] != '0')
+                    variant = abilityMap[args[3]];
+
+                if (testStat.addFeat(Feature::loadFeat(args[2] + ".json", variant)))
 					LogMessage(debugTextCtrl, "Feat " + args[2] + " added.", true);
 				else
 					LogMessage(debugTextCtrl, "Failure to add feat. Does the file exist?", true);
+
+                if (args[4] != '0') {
+                    variant = abilityMap[args[4]];
+
+                    if (testStat.addFeat(Feature::loadFeat(args[2] + ".json", variant)))
+                        LogMessage(debugTextCtrl, "Feat " + args[2] + " added.", true);
+                    else
+                        LogMessage(debugTextCtrl, "Failure in adding the second parameter", true);
+                }
 			}
 			if (args[1] == "-remove")
 			{
 				Feature newFeat = Feature();
-				newFeat.init(args[2], "Null", -1, samArray, samArray, initSArray, -1, -1, -1);
+				newFeat.init(args[2], "Null", -1, -1);
 				if (testStat.removeFeat(newFeat))
 					LogMessage(debugTextCtrl, "Feat " + args[2] + " removed.", true);
 				else
