@@ -2,7 +2,8 @@
 A tool used to help DM's manage their game more efficiently.
 
 ## Want to run this app?
-I'm currently compiling an executable which will be uploaded here at a later date -- check back later!
+- Download the experimental beta via the release tab
+- Download this project and compile yourself using Visual Studio -- note, you will need to follow the instructions in src/dependencies/READ-ME.txt to install wxWidgets (necessary to compile DM Assistor)
 
 # Features
 - A beautiful initiative tracker with several options for individual or party initiative.
