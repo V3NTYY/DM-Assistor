@@ -1,0 +1,9 @@
+{
+	"abilityScoreMod":[1,-1,-1,-1,-1,-1,1],
+	"acceptableVariants":[1,1,1,1,1,1],
+	"desc":"Increase the chosen ability score by 1, to a maximum of 20. You gain proficiency in saving throws using the chosen ability.",
+	"name":"resilient",
+	"repeatable":false,
+	"saveProfMod":[1,-1,-1,-1,-1,-1,1],
+	"type":2
+	}

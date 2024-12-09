@@ -1,0 +1,8 @@
+{
+	"abilityScoreMod":[-1,-1,-1,1,-1,-1,1],
+	"acceptableVariants":[-1,1,-1,1,1,1],
+	"desc":"Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once.",
+	"name":"elven accuracy",
+	"repeatable":false,
+	"type":2
+}

@@ -140,9 +140,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\headers\Condition.h" />
+    <ClInclude Include="src\headers\DiceRoller.h" />
     <ClInclude Include="src\headers\DM Assistor.h" />
+    <ClInclude Include="src\headers\Enum.h" />
+    <ClInclude Include="src\headers\Feature.h" />
     <ClInclude Include="src\headers\framework.h" />
+    <ClInclude Include="src\headers\json.hpp" />
     <ClInclude Include="src\headers\Resource.h" />
+    <ClInclude Include="src\headers\Skill.h" />
+    <ClInclude Include="src\headers\Spell.h" />
+    <ClInclude Include="src\headers\SpellBook.h" />
+    <ClInclude Include="src\headers\Stat.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\resources\DMAssistorMain.ico" />
@@ -152,7 +161,13 @@
     <ResourceCompile Include="src\resources\DMAssistor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\DiceRoller.cpp" />
     <ClCompile Include="src\DM Assistor.cpp" />
+    <ClCompile Include="src\Feature.cpp" />
+    <ClCompile Include="src\Skill.cpp" />
+    <ClCompile Include="src\Spell.cpp" />
+    <ClCompile Include="src\SpellBook.cpp" />
+    <ClCompile Include="src\Stat.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,10 +1,9 @@
-// header.h : include file for standard system include files,
-// or project specific include files
-//
-
-#pragma once
+#ifndef FRAMEWORK_H
+#define FRAMEWORK_H
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+
+#include <filesystem>
 // Windows Header Files
 #include <windows.h>
 // C RunTime Header Files
@@ -13,4 +12,17 @@
 #include <memory.h>
 #include <tchar.h>
 
-// QT Widget (Ribbon) Files
+// WXWIDGETS
+#include <wx/wx.h>
+#include <wx/notebook.h>
+
+// All other headers
+#include "Stat.h"
+#include "DiceRoller.h"
+
+// Json
+#include "headers/json.hpp"
+#include <fstream>
+using json = nlohmann::json;
+
+#endif
