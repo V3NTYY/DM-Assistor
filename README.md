@@ -1,5 +1,8 @@
-# DM Assistor (on indefinite hiatus)
- A tool used to help DM's manage their game more efficiently.
+### DM Assistor (on indefinite hiatus)
+A tool used to help DM's manage their game more efficiently.
+
+## Want to run this app?
+I'm currently compiling an executable which will be uploaded here at a later date -- check back later!
 
 # Features
 - A beautiful initiative tracker with several options for individual or party initiative.
