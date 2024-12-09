@@ -1,4 +1,4 @@
-# DM Assistor (on definite hiatus)
+# DM Assistor (on indefinite hiatus)
  A tool used to help DM's manage their game more efficiently.
 
 # Features
